@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Airlines</title>
+</head>
+<body>
+    {% if airlines %}
+        <table>
+            {% for airline in airlines %}
+                <tr>
+                    <td>{{ airline.name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</body>
+</html>
