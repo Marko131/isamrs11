@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rent-a-Car Services</title>
+</head>
+<body>
+    <form action="{% url 'search' %}" method="post">
+        {% csrf_token %}
+        <input type="search" name="rentacar_search">
+        <input type="submit">
+    </form>
+    {% if rentacars %}
+        <table>
+            {% for rentacar in rentacars %}
+                <tr>
+                    <td>{{ rentacar.name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</body>
+</html>
