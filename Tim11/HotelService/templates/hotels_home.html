@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotels</title>
+</head>
+<body>
+    <form action="{% url 'search' %}" method="post">
+        {% csrf_token %}
+        <input type="search" name="hotels_search">
+        <input type="submit">
+    </form>
+    {% if hotels %}
+        <table>
+            {% for hotel in hotels %}
+                <tr>
+                    <td>{{ hotel.name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</body>
+</html>
