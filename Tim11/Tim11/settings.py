@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'FlightService.apps.FlightserviceConfig',
     'HotelService.apps.HotelserviceConfig',
+    'RentACarService.apps.RentacarserviceConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

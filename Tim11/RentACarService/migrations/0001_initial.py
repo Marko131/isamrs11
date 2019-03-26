@@ -13,7 +13,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Airline',
+            name='Branch',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=100)),
+                ('country', models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='RentACar',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
@@ -23,18 +31,9 @@ class Migration(migrations.Migration):
                 ('rating', models.FloatField()),
             ],
         ),
-        migrations.CreateModel(
-            name='Destination',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('country', models.CharField(max_length=50)),
-                ('airport', models.CharField(max_length=150)),
-                ('airport_code', models.CharField(max_length=10)),
-                ('lat', models.DecimalField(decimal_places=6, max_digits=15)),
-                ('lon', models.DecimalField(decimal_places=6, max_digits=15)),
-                ('image', models.ImageField(upload_to='')),
-                ('airline', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='FlightService.Airline')),
-            ],
+        migrations.AddField(
+            model_name='branch',
+            name='rentacar',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='RentACarService.RentACar'),
         ),
     ]
