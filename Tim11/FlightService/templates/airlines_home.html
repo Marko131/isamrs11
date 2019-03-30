@@ -1,23 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Airlines</title>
-</head>
-<body>
-    <form action="{% url 'search' %}" method="post">
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    <title>Flight</title>
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'search_airlines' %}" method="post">
         {% csrf_token %}
         <input type="search" name="airline_search">
         <input type="submit">
     </form>
-    {% if airlines %}
-        <table>
-            {% for airline in airlines %}
-                <tr>
-                    <td>{{ airline.name }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-</body>
-</html>
+{% endblock %}
