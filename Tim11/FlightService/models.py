@@ -35,7 +35,7 @@ class AirlineAdministrator(models.Model):
     airline = models.ForeignKey(Airline, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.user_profile.username
+        return self.user_profile.email
 
 
 class AircraftModel(models.Model):
@@ -58,14 +58,3 @@ class Flight(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10)
     airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
 
-
-@receiver(post_save, sender=AirlineAdministrator, dispatch_uid='Create Airline Admin')
-def createAirlineAdmin(sender, instance, **kwargs):
-
-    if not instance.user_profile.is_staff and instance.user_profile.email:
-        instance.user_profile.is_staff = True
-        instance.user_profile.is_active = False
-        airline_admin_group = Group.objects.get(name='AirlineAdministrator')
-        airline_admin_group.user_set.add(instance.user_profile)
-        #send_mail
-    instance.user_profile.save()
