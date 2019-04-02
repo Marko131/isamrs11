@@ -1,13 +1,25 @@
 from django.contrib import admin
 from .models import CustomUser
-from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-# Register your models here.
+from django.utils.translation import ugettext_lazy as _
 
 class CustomUserAdmin(UserAdmin):
-    model = get_user_model()
-    list_display = ['username', 'email', ]
-
+    fieldsets = (
+        (None, {'fields': ('email', 'password', 'city')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2'),
+        }),
+    )
+    list_display = ('email', 'first_name', 'last_name', 'is_staff')
+    search_fields = ('email', 'first_name', 'last_name')
+    ordering = ('email',)
     def get_form(self, request, obj=None, **kwargs):
         if not request.user.is_superuser:
             self.readonly_fields = ('is_superuser', 'is_active', 'groups', 'user_permissions', 'last_login', 'date_joined', 'is_staff')
