@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import Destination, Airline, AirlineAdministrator, AircraftModel, Flight
+from Users.models import CustomUser
+from django.contrib.auth.models import Group
 
-from django.contrib.auth.models import User
 
 class AirlineAdministratorInline(admin.TabularInline):
     model = AirlineAdministrator
@@ -54,7 +55,13 @@ class FlightAdmin(admin.ModelAdmin):
             form.base_fields['airline'].queryset = Airline.objects.all()
         return form
 
-admin.site.register(AirlineAdministrator)
+class AirlineAdministratorAdmin(admin.ModelAdmin):
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super(AirlineAdministratorAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__name='AirlineAdministrator')
+        return form
+
+admin.site.register(AirlineAdministrator, AirlineAdministratorAdmin)
 admin.site.register(Destination, DestinationAdmin)
 admin.site.register(Airline, AirlineAdmin)
 admin.site.register(AircraftModel)
