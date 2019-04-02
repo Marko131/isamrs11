@@ -16,12 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from Users import views as user_views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='base.html')),
+    path('', TemplateView.as_view(template_name='base.html'), name='home_page'),
     path('airlines/', include('FlightService.urls')),
     path('hotels/', include('HotelService.urls')),
     path('rentacar/', include('RentACarService.urls')),
-
+    path('register/', user_views.register, name='register'),
+    path('login/', auth_views.LoginView.as_view(template_name='Users/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='Users/logout.html'), name='logout'),
+    path('profile/', user_views.profile, name='profile')
 ]
