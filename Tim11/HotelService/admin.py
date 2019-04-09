@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Hotel, HotelAdministrator
+from .models import Hotel, HotelAdministrator, Room
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
 
@@ -28,5 +28,25 @@ class HotelAdministratorAdmin(admin.ModelAdmin):
         return form
 
 
+class RoomAdmin(admin.ModelAdmin):
+    def get_readonly_fields(self, request, obj=None):
+        if not request.user.is_superuser:
+            return ['hotel']
+        else:
+            return []
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            obj.hotel = request.user.hoteladministrator.hotel
+        super().save_model(request, obj, form, change)
+
+    def get_queryset(self, request):
+        qs = super(RoomAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(hotel=request.user.hoteladministrator.hotel)
+
+
 admin.site.register(Hotel, HotelAdmin)
 admin.site.register(HotelAdministrator, HotelAdministratorAdmin)
+admin.site.register(Room, RoomAdmin)
