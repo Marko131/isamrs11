@@ -16,6 +16,18 @@ class Hotel(models.Model):
         return self.name
 
 
+class Room(models.Model):
+    type = models.CharField(max_length=100)
+    capacity = models.PositiveIntegerField(default=1)
+    floor = models.PositiveIntegerField(default=1)
+    balcony = models.BooleanField()
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    hotel = models.ForeignKey(Hotel, null=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.pk) + " " + self.type
+
+
 class HotelAdministrator(models.Model):
     user_profile = models.OneToOneField(CustomUser, null=False, on_delete=models.CASCADE)
     hotel = models.ForeignKey(Hotel,null=False, on_delete=models.CASCADE)
