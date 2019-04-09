@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import RentACar, Branch
+from .models import RentACar, Branch, Vehicle, RentACarAdministrator
 from django.contrib import admin
-from .models import RentACar, RentACarAdministrator
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
 
@@ -30,11 +29,11 @@ class RentACarAdministratorAdmin(admin.ModelAdmin):
         return form
 
 class BranchAdmin(admin.ModelAdmin):
-    def get_form(self, request, obj=None, change=False, **kwargs):
-        form = super(BranchAdmin, self).get_form(request, obj, **kwargs)
+    def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
-            form.base_fields['rentacar'].widget.attrs['disabled'] = True
-        return form
+            return ['rentacar']
+        else:
+            return []
 
     def save_model(self, request, obj, form, change):
         if not request.user.is_superuser:
@@ -47,6 +46,26 @@ class BranchAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(rentacar=request.user.rentacaradministrator.rentacarservice)
 
+class VehicleAdmin(admin.ModelAdmin):
+    def get_readonly_fields(self, request, obj=None):
+        if not request.user.is_superuser:
+            return ['rentacar']
+        else:
+            return []
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            obj.rentacar = request.user.rentacaradministrator.rentacarservice
+        super().save_model(request, obj, form, change)
+
+    def get_queryset(self, request):
+        qs = super(VehicleAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(rentacar=request.user.rentacaradministrator.rentacarservice)
+
+
 admin.site.register(RentACar, RentACarAdmin)
 admin.site.register(RentACarAdministrator, RentACarAdministratorAdmin)
-#admin.site.register(Branch, BranchAdmin)
+admin.site.register(Branch, BranchAdmin)
+admin.site.register(Vehicle, VehicleAdmin)
