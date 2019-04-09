@@ -136,5 +136,5 @@ EMAIL_HOST_USER = 'isamrstest11@gmail.com' #my gmail username
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-LOGIN_REDIRECT_URL = 'home_page'
+LOGIN_REDIRECT_URL = 'airlines'
 LOGIN_URL = 'login'

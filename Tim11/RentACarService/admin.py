@@ -30,13 +30,23 @@ class RentACarAdministratorAdmin(admin.ModelAdmin):
         return form
 
 class BranchAdmin(admin.ModelAdmin):
-
-
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(BranchAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['rentacar'].queryset = RentACar.objects.filter(id=request.user.rentacaradministrator.rentacarservice_id)
+        if not request.user.is_superuser:
+            form.base_fields['rentacar'].widget.attrs['disabled'] = True
         return form
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            obj.rentacar = request.user.rentacaradministrator.rentacarservice
+        super().save_model(request, obj, form, change)
+
+    def get_queryset(self, request):
+        qs = super(BranchAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(rentacar=request.user.rentacaradministrator.rentacarservice)
 
 admin.site.register(RentACar, RentACarAdmin)
 admin.site.register(RentACarAdministrator, RentACarAdministratorAdmin)
-admin.site.register(Branch, BranchAdmin)
+#admin.site.register(Branch, BranchAdmin)

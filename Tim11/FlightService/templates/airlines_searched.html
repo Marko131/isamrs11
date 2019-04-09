@@ -1,18 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Airlines</title>
-</head>
-<body>
-    {% if airlines %}
-        <table>
-            {% for airline in airlines %}
-                <tr>
-                    <td>{{ airline.name }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-</body>
-</html>
+{% extends 'airlines_home.html' %}
+{% load staticfiles %}
+
+
+{% block search_result %}
+    {% for flight in flights %}
+       <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-md-8  card-body">
+                                <div class="m-2">
+                                    {{ flight.destination_from }} - {{ flight.destination_to }}
+                                </div>
+                                <div class="m-2">
+                                    {{ flight.departure_time }}
+                                </div>
+                                <div class="m-2">
+                                    {{ flight.arrival_time }}
+                                </div>
+                            </div>
+                            <div class="col-md-4 border-left card-body">
+                                <ul class="list-unstyled">
+                                    <li><h3>Price: {{ flight.price }} EUR</h3></li>
+                                </ul>
+                                <a href="#" class="btn btn-outline-primary">Select</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

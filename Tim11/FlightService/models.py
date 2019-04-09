@@ -3,7 +3,8 @@ from Users.models import CustomUser
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Airline(models.Model):
     name = models.CharField(max_length=100)
@@ -38,14 +39,6 @@ class AirlineAdministrator(models.Model):
         return self.user_profile.email
 
 
-class AircraftModel(models.Model):
-    name = models.CharField(max_length=50)
-    row = models.PositiveIntegerField()
-    col = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.name
-
 class Flight(models.Model):
     destination_from = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='destination_from')
     destination_to = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='destination_to')
@@ -54,7 +47,25 @@ class Flight(models.Model):
     #flight_time
     flight_distance = models.PositiveIntegerField()
     #flight_connnections
-    aircraft_model = models.ForeignKey(AircraftModel, on_delete=models.CASCADE)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
+    row = models.PositiveIntegerField(default=1)
+    col = models.PositiveIntegerField(default=1)
 
+
+class Seat(models.Model):
+    flight = models.ForeignKey(Flight, on_delete=models.CASCADE, default=None)
+    available = models.BooleanField(default=True)
+    row = models.PositiveIntegerField()
+    col = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f'Flight {self.flight.id} - {self.row} {self.col}'
+
+
+@receiver(post_save, sender=Flight)
+def create_seats(sender, instance, created, **kwargs):
+    if created:
+        for i in range(instance.row):
+            for j in range(instance.col):
+                Seat.objects.create(flight=instance, row=i+1, col=j+1)
