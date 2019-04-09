@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    {{ user.email }}
-    <br/>
-    {{ user.first_name }}
-    <br/>
-    {{ user.last_name }}
-</body>
-</html>
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block body %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.email }}
+        <br/>
+        {{ form.first_name }}
+        <br/>
+        {{ form.last_name }}
+        <br/>
+        {{ form.phone }}
+        <br/>
+        <input type="submit">
+    </form>
+{% endblock %}

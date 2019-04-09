@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Destination, Airline, AirlineAdministrator, AircraftModel, Flight
+from .models import Destination, Airline, AirlineAdministrator, Flight, Seat
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
 
@@ -8,6 +8,12 @@ class AirlineAdministratorInline(admin.TabularInline):
     model = AirlineAdministrator
     extra = 0
 
+class SeatInline(admin.TabularInline):
+    model = Seat
+    extra = 0
+
+class AircraftModelAdmin(admin.ModelAdmin):
+    inlines = [SeatInline]
 
 class AirlineAdmin(admin.ModelAdmin):
     search_fields = ['name']
@@ -23,19 +29,22 @@ class AirlineAdmin(admin.ModelAdmin):
 
 
 class DestinationAdmin(admin.ModelAdmin):
-    def get_form(self, request, obj=None, change=False, **kwargs):
-        form = super(DestinationAdmin, self).get_form(request, obj, **kwargs)
+    def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
-            form.base_fields['airline'].queryset = Airline.objects.filter(airlineadministrator__user_profile=request.user)
+            return ['airline']
         else:
-            form.base_fields['airline'].queryset = Airline.objects.all()
-        return form
+            return []
 
     def get_queryset(self, request):
         qs = super(DestinationAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return qs
         return qs.filter(airline=request.user.airlineadministrator.airline)
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            obj.airline = request.user.airlineadministrator.airline
+        super().save_model(request, obj, form, change)
 
 
 class FlightAdmin(admin.ModelAdmin):
@@ -47,13 +56,18 @@ class FlightAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(airline=request.user.airlineadministrator.airline)
 
-    def get_form(self, request, obj=None, change=False, **kwargs):
-        form = super(FlightAdmin, self).get_form(request, obj, **kwargs)
+
+    def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
-            form.base_fields['airline'].queryset = Airline.objects.filter(airlineadministrator__airline=request.user.airlineadministrator.airline)
+            return ['airline']
         else:
-            form.base_fields['airline'].queryset = Airline.objects.all()
-        return form
+            return []
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            obj.airline = request.user.airlineadministrator.airline
+        super().save_model(request, obj, form, change)
+
 
 class AirlineAdministratorAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, change=False, **kwargs):
@@ -61,10 +75,16 @@ class AirlineAdministratorAdmin(admin.ModelAdmin):
         form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__name='AirlineAdministrator')
         return form
 
+
+class SeatAdmin(admin.ModelAdmin):
+    readonly_fields = ['flight', 'row', 'col', 'available']
+
+
+
+
 admin.site.register(AirlineAdministrator, AirlineAdministratorAdmin)
 admin.site.register(Destination, DestinationAdmin)
 admin.site.register(Airline, AirlineAdmin)
-admin.site.register(AircraftModel)
 admin.site.register(Flight, FlightAdmin)
-
+admin.site.register(Seat, SeatAdmin)
 
