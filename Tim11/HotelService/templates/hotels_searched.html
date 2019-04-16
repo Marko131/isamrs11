@@ -1,18 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends 'base.html' %}
+
+{% block title %}
     <title>Hotels</title>
-</head>
-<body>
-    {% if hotels %}
-        <table>
-            {% for hotel in hotels %}
-                <tr>
-                    <td>{{ hotel.name }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-</body>
-</html>
+{% endblock %}
+
+{% block hotel_active %}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block navbar_search %}
+    <form action="{% url 'search_hotels' %}" method="post" class="form-inline my-2 my-lg-0">
+        {% csrf_token %}
+        <input name="hotels_search" class="form-control mr-sm-2" type="search" placeholder="Search hotels" aria-label="Search">
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+    </form>
+{% endblock %}
+
+{% block search_result %}
+    {% for hotel in hotels %}
+        <div class="row mb-3 offset-2">
+            <div class="col-md-12">
+                <div class="card h-100 w-75">
+                    <div class="card-body">
+                        <div class="row">
+                            {{ hotel.name }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+    {% endfor %}
+{% endblock %}

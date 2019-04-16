@@ -25,12 +25,28 @@
                                 <ul class="list-unstyled">
                                     <li><h3>Price: {{ flight.price }} EUR</h3></li>
                                 </ul>
-                                <a href="#" class="btn btn-outline-primary">Select</a>
+                                <a href="{% url 'flight_with_id' flight.id %}" class="btn btn-outline-primary">Select</a>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+    {% endfor %}
+
+    {% for airline in airlines %}
+       <div class="row mb-3 offset-2">
+            <div class="col-md-12">
+                <div class="card h-100 w-75">
+                    <div class="card-body">
+                        <div class="row">
+                            {{ airline.name }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
     {% endfor %}
 {% endblock %}

@@ -44,3 +44,21 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Request(models.Model):
+    user_send = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_send')
+    user_accept = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_accept')
+
+    def __str__(self):
+        return self.user_send.email + ' - ' + self.user_accept.email
+
+class Friends(models.Model):
+    class Meta:
+        verbose_name_plural = 'Friends'
+
+    current_user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='current_user')
+    friend_list = models.ManyToManyField(CustomUser)
+
+    def __str__(self):
+        return self.current_user.email

@@ -1,14 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rent-a-Car Services</title>
-</head>
-<body>
-    <form action="{% url 'search_rentacars' %}" method="post">
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    <title>Rent-a-car</title>
+{% endblock %}
+
+{% block rentacar_active %}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block navbar_search %}
+    <form action="{% url 'search_rentacars' %}" method="post" class="form-inline my-2 my-lg-0">
         {% csrf_token %}
-        <input type="search" name="rentacar_search">
-        <input type="submit">
+        <input name="rentacar_search" class="form-control mr-sm-2" type="search" placeholder="Search rent-a-car" aria-label="Search">
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
     </form>
-</body>
-</html>
+{% endblock %}

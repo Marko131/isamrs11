@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+    <script>
+        function send_request_js(event, user_id) {
+            event.preventDefault();
+            $.ajax({
+                type: "GET",
+                url: "/send_request/" + user_id,
+                success: function () {
+                    event.target.innerText = "Friend request sent";
+                    event.target.classList.remove("btn-outline-primary");
+                    event.target.classList.add("btn-secondary");
+                    event.target.classList.add("disabled");
+                }
+            });
+        }
+        function ignore_request(event, request_id) {
+            event.preventDefault();
+            $.ajax({
+                type: "GET",
+                url: "/ignore_request/" + request_id,
+                success: function () {
+                    event.target.parentElement.parentElement.parentElement.parentElement.style.display = "none";
+                }
+            })
+        }
+        function accept_request(event, request_id) {
+            event.preventDefault();
+            $.ajax({
+                type: "GET",
+                url: "/accept_request/" + request_id,
+                success: function () {
+                    event.target.innerText = "Accepted";
+                    event.target.classList.remove("btn-outline-primary");
+                    event.target.classList.add("btn-secondary");
+                    event.target.classList.add("disabled");
+
+                    event.target.parentElement.children[0].style.display = "none";
+                }
+            })
+        }
+        function remove_friend(event, user_id){
+            event.preventDefault();
+            console.log("remove_friend");
+            $.ajax({
+                type: "GET",
+                url: "/remove_friend/" + user_id,
+                success: function () {
+                    console.log(event.target.parentElement.parentElement.parentElement.parentElement.parentElement);
+                    event.target.parentElement.parentElement.parentElement.parentElement.parentElement.style.display = "none";
+                }
+            })
+        }
+    </script>
+{% endblock %}
+
+{% block navbar_search %}
+    <form class="form-inline my-2 my-lg-0" method="post">
+        {% csrf_token %}
+        <input class="form-control mr-sm-2" type="search" placeholder="Search users" aria-label="Search" name="search_friend">
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+    </form>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        {% if users %}
+            {% for user, status in users %}
+                <div class="card mx-auto my-2" style="max-width: 40rem;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col d-flex align-items-center">
+                                {{ user.email }} - {{ user.first_name }} {{ user.last_name }}
+                            </div>
+                            <div class="col">
+                                {% if status == 0 %}
+                                    <div>
+                                        <a onclick="remove_friend(event, {{ user.id }})" href="#" class="btn btn-outline-danger float-right">Remove</a>
+                                    </div>
+                                {% elif status == 1 %}
+                                    <a href="#" class="btn btn-secondary disabled float-right">Pending</a>
+                                {% elif status == 2 %}
+                                    <a onclick="ignore_request(event, {{ r.pk }})" href="#" class="btn btn-outline-danger mx-2 float-right">Ignore</a>
+                                    <a onclick="accept_request(event, {{ r.pk }})" href="#" class="btn btn-outline-primary mx-2 float-right">Accept</a>
+                                {% elif status == 3 %}
+                                    <a onclick="send_request_js(event, {{ user.id }})" href="#" class="btn btn-outline-primary float-right">Add friend</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <!-- Requests -->
+
+            {% if requests %}
+                <div class="row">
+                    <div class="col">
+                        <h2 class="h2 text-center">Friend requests</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+
+                        {% for r in requests %}
+                            <div class="row justify-content-center">
+                                <div class="col card my-2" style="max-width: 40rem;">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col d-flex align-items-center">
+                                                {{ r.user_send.email }}
+                                            </div>
+                                            <div class="col">
+                                                <a onclick="ignore_request(event, {{ r.pk }})" href="#" class="btn btn-outline-danger mx-2 float-right">Ignore</a>
+                                                <a onclick="accept_request(event, {{ r.pk }})" href="#" class="btn btn-outline-primary mx-2 float-right">Accept</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Friends -->
+            <div class="row">
+                <div class="col">
+                    {% if friends %}
+                        <h2 class="h2 text-center">Friends list</h2>
+                        {% for friend in friends %}
+                            <div class="row justify-content-center">
+                            <div class="col card my-2" style="max-width: 40rem;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col d-flex align-items-center">
+                                            {{ friend.email }}
+                                        </div>
+                                        <div class="col">
+                                            <a onclick="remove_friend(event, {{ friend.id }})" href="#" class="btn btn-outline-danger float-right">Remove</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <h2 class="h2 text-center">Friend list is empty</h2>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+

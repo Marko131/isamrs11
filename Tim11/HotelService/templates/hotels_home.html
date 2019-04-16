@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hotels</title>
-</head>
-<body>
-    <form action="{% url 'search_hotels' %}" method="post">
-        {% csrf_token %}
-        <input type="search" name="hotels_search">
-        <input type="submit">
-    </form>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% load staticfiles %}
+
+{% block title %}
+    <title>Hotels</title>
+{% endblock %}
+
+{% block hotel_active %}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block navbar_search %}
+    <form action="{% url 'search_hotels' %}" method="post" class="form-inline my-2 my-lg-0">
+        {% csrf_token %}
+        <input name="hotels_search" class="form-control mr-sm-2" type="search" placeholder="Search hotels" aria-label="Search">
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+    </form>
+{% endblock %}
