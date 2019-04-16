@@ -1,18 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rent-a-Car Services</title>
-</head>
-<body>
-    {% if rentacars %}
-        <table>
-            {% for rentacar in rentacars %}
-                <tr>
-                    <td>{{ rentacar.name }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Rent-a-car Services</title>
+{% endblock %}
+
+{% block rentacar_active %}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block navbar_search %}
+    <form action="{% url 'search_rentacars' %}" method="post" class="form-inline my-2 my-lg-0">
+        {% csrf_token %}
+        <input name="rentacar_search" class="form-control mr-sm-2" type="search" placeholder="Search rent-a-car" aria-label="Search">
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+    </form>
+{% endblock %}
+
+{% block search_result %}
+    {% for rentacar in rentacars %}
+        <div class="row mb-3 offset-2">
+            <div class="col-md-12">
+                <div class="card h-100 w-75">
+                    <div class="card-body">
+                        <div class="row">
+                            {{ rentacar.name }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+    {% endfor %}
+{% endblock %}

@@ -9,10 +9,18 @@
     {% endblock %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/flight_seats.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+
+    {% block scripts%}
+    {% endblock %}
 
 </head>
 <body>
@@ -24,23 +32,26 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <!--
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            -->
+            {% block flight_active %}
             <li class="nav-item">
+            {% endblock %}
                 <a class="nav-link" href="{% url 'airlines' %}">Flight</a>
             </li>
 
+            {% block hotel_active %}
             <li class="nav-item">
+            {% endblock %}
                 <a class="nav-link" href="{% url 'hotels' %}">Hotel</a>
             </li>
 
+            {% block rentacar_active %}
             <li class="nav-item">
+            {% endblock %}
                 <a class="nav-link" href="{% url 'rentacars' %}">Rent-a-car</a>
             </li>
         </ul>
+        {% block navbar_search %}
+        {% endblock %}
         <!--
         <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -55,7 +66,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{% url 'profile' %}">My profile</a>
-                    <a class="dropdown-item" href="#">Friends</a>
+                    <a class="dropdown-item" href="{% url 'friends' %}">Friends</a>
                     <a class="dropdown-item" href="#">Reservations</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
@@ -89,6 +100,6 @@
     </div>
 </section>
 
-
+<script src="{% static 'js/flight_seats.js' %}" type="text/javascript"></script>
 </body>
 </html>

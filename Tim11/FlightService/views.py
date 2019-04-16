@@ -1,13 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Airline, Flight
 from datetime import datetime
-# Create your views here.
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
+
 
 def airlines(request):
     return render(request, 'airlines_home.html')
 
 
-def searched_airlines(request):
+def search_flights(request):
     destination_from = request.POST.get('destination_from')
     destination_to = request.POST.get('destination_to')
     try:
@@ -24,3 +26,13 @@ def searched_airlines(request):
 
     return render(request, 'airlines_searched.html', {'flights': flights, 'flights_inv:': flights_inv})
 
+
+def flight_detail(request, flight_id):
+    flight = get_object_or_404(Flight, pk=flight_id)
+    return render(request, 'flight_id.html', {'flight':flight})
+
+
+def search_airlines(request):
+    search_input = request.POST.get('airline')
+    airlines = Airline.objects.filter(name__contains=search_input)
+    return render(request, 'airlines_searched.html', {'airlines': airlines})

@@ -24,8 +24,14 @@ urlpatterns = [
     path('', include('FlightService.urls')),
     path('hotels/', include('HotelService.urls')),
     path('rentacar/', include('RentACarService.urls')),
+
     path('register/', user_views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='Users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='airlines_home.html'), name='logout'),
-    path('profile/', user_views.profile, name='profile')
+    path('profile/', user_views.profile, name='profile'),
+    path('friends/', user_views.FriendList.as_view(), name='friends'),
+    path('send_request/<int:user_id>', user_views.send_request, name='send_request'),
+    path('ignore_request/<int:request_id>', user_views.ignore_request, name='ignore_request'),
+    path('accept_request/<int:request_id>', user_views.accept_request, name='accept_request'),
+    path('remove_friend/<int:user_id>', user_views.remove_friend, name='remove_friend'),
 ]

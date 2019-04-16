@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block body %}
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="mt-5 mb-4">
+                Flight ID: {{ flight.id }}
+            </div>
+
+        </div>
+
+        <div class="row justify-content-center">
+
+        </div>
+
+        <div class="row justify-content-center">
+
+            <div id="seats">
+                <script>
+                    let seats = [
+                        {% for seat in flight.seat_set.all %}
+                            {"id": {{ seat.id }},"row": {{seat.row}}, "col": {{seat.col}} },
+                        {% endfor %}
+                    ];
+
+                    let rows = {{ flight.row }};
+                    let cols = {{ flight.col }};
+
+                    for (let i = 1; i <= rows; i++){
+                        for (let j = 1; j <= cols; j++){
+                            let ind = 0;
+                            let current_id = 0;
+                            for (let k = 0; k < seats.length; k++){
+                                if (seats[k].row === i && seats[k].col === j){
+                                    ind = 1;
+                                    current_id = seats[k].id;
+                                }
+                            }
+                            if (ind === 1){
+                                document.write("<div class=\"outer-seat\" id=\"div-inline\"><div class=\"inner-seat\">"+ current_id + "</div></div>");
+                            } else {
+                                document.write("<div class=\"block-outer-seat\" id=\"div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                            }
+                        }
+                        document.write("<br class=\"clearBoth\" />");
+                    }
+                </script>
+            </div>
+            <br class="clearBoth" />
+        </div>
+    </div>
+
+{% endblock %}

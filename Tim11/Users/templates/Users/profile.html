@@ -1,17 +1,89 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
+{% block title %}
+    <title>Profile</title>
+{% endblock %}
+
 {% block body %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form.email }}
-        <br/>
-        {{ form.first_name }}
-        <br/>
-        {{ form.last_name }}
-        <br/>
-        {{ form.phone }}
-        <br/>
-        <input type="submit">
-    </form>
+    <script>
+    $(document).ready(function () {
+
+        $("#id_email").attr("size", "40");
+        $("#id_first_name").attr("size", "40");
+        $("#id_last_name").attr("size", "40");
+        $("#id_phone").attr("size", "40");
+
+        $("#user_image").attr("width", "90%");
+    });
+    </script>
+    <div class="container">
+        <div class="row justify-content-center border border-primary mt-4">
+            <div class="col-md-4 d-flex align-items-center">
+                <img id="user_image" class="my-5 p-5 mx-auto" src="{% static 'profile_image.png' %}">
+            </div>
+            <div class="col-md-8 d-flex align-items-center">
+                <form method="post" class="my-5 p-5 mx-auto" style="min-width: 35rem">
+                    {% csrf_token %}
+
+                    {% if messages %}
+                        <div class="form-row m-auto">
+                            <div class="col">
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="form-row mt-3">
+                        <div class="col-3">
+                            <label>E-mail</label>
+                        </div>
+
+                        <div class="col-9">
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-4">
+                        <div class="col-3">
+                            <label>First name</label>
+                        </div>
+
+                        <div class="col-9">
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-4">
+                        <div class="col-3">
+                            <label>Last name</label>
+                        </div>
+
+                        <div class="col-9">
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-4">
+                        <div class="col-3">
+                            <label>Phone</label>
+                        </div>
+                        <div class="col-9">
+                            {{ form.phone }}
+                        </div>
+                    </div>
+
+                    <div class="row mt-5 justify-content-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
