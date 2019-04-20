@@ -15,15 +15,18 @@
         $("#id_phone").attr("size", "40");
 
         $("#user_image").attr("width", "90%");
+        $("#user_image").show();
+
+        $("#profile_section").show();
     });
     </script>
-    <div class="container">
-        <div class="row justify-content-center border border-primary mt-4">
+    <div class="container" style="z-index: 0;display: none" id="profile_section">
+        <div class="row justify-content-center mt-4" style="background-color: rgba(33,37,41,.5)">
             <div class="col-md-4 d-flex align-items-center">
-                <img id="user_image" class="my-5 p-5 mx-auto" src="{% static 'profile_image.png' %}">
+                <img id="user_image" class="my-5 p-5 mx-auto" src="{% static 'profile_image.png' %}" style="display: none">
             </div>
             <div class="col-md-8 d-flex align-items-center">
-                <form method="post" class="my-5 p-5 mx-auto" style="min-width: 35rem">
+                <form  method="post" class="my-5 p-5 mx-auto" style="min-width: 35rem" >
                     {% csrf_token %}
 
                     {% if messages %}
@@ -40,7 +43,7 @@
 
                     <div class="form-row mt-3">
                         <div class="col-3">
-                            <label>E-mail</label>
+                            <label class="text-white">E-mail</label>
                         </div>
 
                         <div class="col-9">
@@ -50,7 +53,7 @@
 
                     <div class="form-row mt-4">
                         <div class="col-3">
-                            <label>First name</label>
+                            <label class="text-white">First name</label>
                         </div>
 
                         <div class="col-9">
@@ -60,7 +63,7 @@
 
                     <div class="form-row mt-4">
                         <div class="col-3">
-                            <label>Last name</label>
+                            <label class="text-white">Last name</label>
                         </div>
 
                         <div class="col-9">
@@ -70,7 +73,7 @@
 
                     <div class="form-row mt-4">
                         <div class="col-3">
-                            <label>Phone</label>
+                            <label class="text-white">Phone</label>
                         </div>
                         <div class="col-9">
                             {{ form.phone }}

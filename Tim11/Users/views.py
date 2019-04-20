@@ -11,12 +11,15 @@ from django.http import HttpResponse, HttpResponseForbidden
 
 def register(request):
     if request.method == 'POST':
+        print(request.POST)
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, 'Your account has been created')
             return redirect('login')
+        else:
+            return render(request, 'Users/register.html', {'form': form})
     else:
         form = UserRegisterForm()
     return render(request, 'Users/register.html', {'form': form})

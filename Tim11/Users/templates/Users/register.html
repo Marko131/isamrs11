@@ -1,87 +1,74 @@
 {% extends 'base.html'%}
 
-{% block body %}
+{% block title %}
+    <title>Register</title>
+{% endblock %}
 
+{% block register_active%}
+    <li class="nav-item active">
+{% endblock %}
+
+{% block body %}
+    <script>
+    $(document).ready(function () {
+
+    });
+    </script>
     <div class="container">
         <div class="row justify-content-center">
-            <form method="post" action="{% url 'register' %}" class="m-5 p-5 bg-dark text-white">
+            <form id="register_form" method="post" action="{% url 'register' %}" class="mx-5 my-3 p-5 text-white" style="background-color: rgba(33,37,41,.5);">
                 {% csrf_token %}
+                <div class="row mt-4">
+                    <div class="col">
+                        <!-- E-mail -->
+                        <div class="form-group">
+                            <input type="email" name="email" id="id_email" class="effect-22"  placeholder="" size="35" required>
+                            <label>E-mail</label>
+                            <span class="focus-bg"></span>
+                        </div>
 
-                {% if messagess %}
-                    <div class="form-row m-auto">
-                        <div class="col">
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tegs }}">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
+                        <!-- Password1 -->
+                        <div class="form-group">
+                            <input type="password" name="password1" id="id_password1" class="effect-22" placeholder="" size="35" required>
+                            <label>Password</label>
+                            <span class="focus-bg"></span>
+                        </div>
+                        <!-- Password2 -->
+                        <div class="form-group">
+                            <input type="password" name="password2" id="id_password2" class="effect-22"  placeholder="" size="35" required>
+                            <label>Confirm password</label>
+                            <span class="focus-bg"></span>
                         </div>
                     </div>
-                {% endif %}
-
-                <div class="form-row mt-3">
-                    <div class="col">
-                        <label>E-mail</label>
-                    </div>
 
                     <div class="col">
-                        {{ form.email }}
-                    </div>
-                </div>
-
-                <div class="form-row mt-3">
-                    <div class="col">
-                        <label>Password</label>
-                    </div>
-
-                    <div class="col">
-                        {{ form.password1 }}
-                    </div>
-                </div>
-
-                <div class="form-row mt-3">
-                    <div class="col">
-                        <label>Confirm password</label>
-                    </div>
-
-                    <div class="col">
-                        {{ form.password2 }}
+                        <!-- First name -->
+                        <div class="form-group">
+                            <input type="text" name="first_name" id="id_first_name" class="effect-22"  placeholder="" size="35" required>
+                            <label>First name</label>
+                            <span class="focus-bg"></span>
+                        </div>
+                        <!-- Last name -->
+                        <div class="form-group">
+                            <input type="text" name="last_name" id="id_last_name" class="effect-22"  placeholder="" size="35" required>
+                            <label>Last name</label>
+                            <span class="focus-bg"></span>
+                        </div>
+                        <!-- Phone number -->
+                        <div class="form-group">
+                            <input type="text" name="phone_number" id="id_phone_number" class="effect-22"  placeholder="" size="35" required>
+                            <label>Phone number</label>
+                            <span class="focus-bg"></span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-row mt-4">
-                    <div class="col">
-                        <label>First name</label>
-                    </div>
-
-                    <div class="col">
-                        {{ form.first_name }}
-                    </div>
+                <div class="row justify-content-center mt-3">
+                    <button type="submit" class="btn btn-primary px-4">Register</button>
                 </div>
-
-                <div class="form-row mt-4">
-                    <div class="col">
-                        <label>Last name</label>
-                    </div>
-
-                    <div class="col">
-                        {{ form.last_name }}
-                    </div>
+                <div class="row justify-content-center mt-5">
+                    Already have an account?&nbsp
+                    <a href="{% url 'login' %}" class="text-white">Login here</a>
                 </div>
-
-                <div class="form-row mt-4">
-                    <div class="col">
-                        <label>Phone</label>
-                    </div>
-                    <div class="col">
-                        {{ form.phone_number }}
-                    </div>
-                </div>
-
-                <div class="row mt-5 justify-content-center">
-                    <button type="submit" class="btn btn-primary">Sign up</button>
-                </div>
-
             </form>
         </div>
     </div>
