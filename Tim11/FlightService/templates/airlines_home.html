@@ -10,10 +10,21 @@
 {% endblock %}
 
 {% block navbar_search %}
+    <!--
     <form action="{% url 'search_airlines' %}" method="post" class="form-inline my-2 my-lg-0">
         {% csrf_token %}
         <input name="airline" class="form-control mr-sm-2" type="search" placeholder="Search airlines" aria-label="Search">
         <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+    </form>
+    -->
+    <form action="{% url 'search_airlines' %}" method="post" class="form-inline my-2 my-lg-0">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="search" name="airline" class="effect-23" placeholder="">
+            <label>Search airlines</label>
+            <span class="focus-bg"></span>
+        </div>
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" id="airline_search_button"><i class="fa fa-search"></i></button>
     </form>
 {% endblock %}
 
@@ -34,11 +45,11 @@
                             </div>
 
                              <div class="col-lg-2 col-md-2 col-sm-12 p-0">
-                                 <input type="date" class="form-control search-slt" name="date_depart">
+                                 <input type="date" class="form-control search-slt" placeholder="Date1" name="date_depart">
                             </div>
 
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
-                                <input type="date" class="form-control search-slt" name="date_return">
+                                <input type="date" class="form-control search-slt" placeholder="Date2" name="date_return">
                             </div>
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
                                 <button type="submit" class="btn btn-primary wrn-btn">Search flights</button>

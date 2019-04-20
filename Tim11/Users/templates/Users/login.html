@@ -1,55 +1,65 @@
 {% extends 'base.html'%}
 
+{% block title %}
+    <title>Login</title>
+{% endblock %}
+
+{% block login_active %}
+    <li class="nav-item active">
+{% endblock %}
+
 {% block body %}
     <script>
     $(document).ready(function () {
-
-        $("#id_username").attr("size", "35");
-        $("#id_password").attr("size", "35");
+        $(".effect-22").focusout(function () {
+           if ($(this).val() !== ""){
+               $(this).addClass("has-content");
+           } else {
+               $(this).removeClass("has-content");
+           }
+        });
     });
     </script>
     <div class="container">
         <div class="row justify-content-center">
-            <form method="post" class="m-5 p-5 bg-dark text-white">
+            <form id="login_form" method="post" class="mx-5 my-3 p-5 text-white" style="background-color: rgba(33,37,41,.5);">
                 {% csrf_token %}
 
                 {% if form.errors %}
                 <div class="form-row m-auto">
                     <div class="col">
-
                         <div class="alert alert-danger text-center">
-
                             Invalid username or password
-
                         </div>
-
                     </div>
                 </div>
                 {% endif %}
 
-               <div class="form-row mt-4">
-                    <div class="col">
-                        <label>E-mail</label>
-                    </div>
-
-                    <div class="col">
-                        {{ form.username }}
-                    </div>
-                </div>
-
                 <div class="form-row mt-4">
-                    <div class="col">
+                    <div class="form-group">
+                        <input type="text" name="username" id="id_username" class="effect-22" placeholder="" size="35" required>
+                        <label>E-mail</label>
+                        <span class="focus-bg"></span>
+                    </div>
+
+                </div>
+                <div class="form-row mt-4">
+                    <div class="form-group">
+                        <input type="password" name="password" id="id_password" class="effect-22"  placeholder="" size="35" required>
                         <label>Password</label>
-                    </div>
-                    <div class="col">
-                        {{ form.password }}
+                        <span class="focus-bg"></span>
                     </div>
                 </div>
 
-                <div class="row mt-5 justify-content-center">
-                    <button type="submit" class="btn btn-primary">Log in</button>
+                <div class="form-row mt-3 justify-content-center">
+                    <button type="submit" class="btn btn-primary px-4">Login</button>
                 </div>
 
+                <div class="form-row mt-5 justify-content-center ">
+                    <a href="{% url 'register' %}" class="text-white">
+                        Create your Account
+                    </a>
+                </div>
             </form>
         </div>
     </div>

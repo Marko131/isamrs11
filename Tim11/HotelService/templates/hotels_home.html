@@ -13,7 +13,11 @@
 {% block navbar_search %}
     <form action="{% url 'search_hotels' %}" method="post" class="form-inline my-2 my-lg-0">
         {% csrf_token %}
-        <input name="hotels_search" class="form-control mr-sm-2" type="search" placeholder="Search hotels" aria-label="Search">
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+        <div class="form-group">
+            <input type="search" name="hotels_search" class="effect-23" placeholder="">
+            <label>Search hotels</label>
+            <span class="focus-bg"></span>
+        </div>
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" id="airline_search_button"><i class="fa fa-search"></i></button>
     </form>
 {% endblock %}
