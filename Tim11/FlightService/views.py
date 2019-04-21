@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Airline, Flight
+from .models import Airline, Flight, FlightReservation
 from datetime import datetime
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
+from django.contrib.auth.decorators import login_required
 
 
 def airlines(request):
@@ -36,3 +37,17 @@ def search_airlines(request):
     search_input = request.POST.get('airline')
     airlines = Airline.objects.filter(name__contains=search_input)
     return render(request, 'airlines_searched.html', {'airlines': airlines})
+
+
+def airline_detail(request, airline_id):
+    airline = get_object_or_404(Airline, pk=airline_id)
+    quick_reservations = FlightReservation.objects.filter(seat__flight__airline=airline, user__isnull=True)
+    return render(request, 'airline_id.html', {'airline':airline, 'reservations':quick_reservations})
+
+
+@login_required
+def reserve(request, reservation_id):
+    reservation = get_object_or_404(FlightReservation, pk=reservation_id)
+    reservation.user = request.user
+    reservation.save()
+    return render(request, 'airlines_home.html')
