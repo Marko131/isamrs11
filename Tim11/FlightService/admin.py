@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Destination, Airline, AirlineAdministrator, Flight, Seat
+from .models import Destination, Airline, AirlineAdministrator, Flight, Seat, FlightReservation
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
 
@@ -79,7 +79,26 @@ class AirlineAdministratorAdmin(admin.ModelAdmin):
 class SeatAdmin(admin.ModelAdmin):
     readonly_fields = ['flight', 'row', 'col', 'available']
 
+    def get_queryset(self, request):
+        qs = super(SeatAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(flight__airline=request.user.airlineadministrator.airline)
 
+
+class FlightReservationAdmin(admin.ModelAdmin):
+    readonly_fields = ['user']
+
+    def get_queryset(self, request):
+        qs = super(FlightReservationAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(seat__flight__airline=request.user.airlineadministrator.airline)
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super(FlightReservationAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['seat'].queryset = Seat.objects.filter(flight__airline=request.user.airlineadministrator.airline, available=True)
+        return form
 
 
 admin.site.register(AirlineAdministrator, AirlineAdministratorAdmin)
@@ -87,4 +106,4 @@ admin.site.register(Destination, DestinationAdmin)
 admin.site.register(Airline, AirlineAdmin)
 admin.site.register(Flight, FlightAdmin)
 admin.site.register(Seat, SeatAdmin)
-
+admin.site.register(FlightReservation, FlightReservationAdmin)

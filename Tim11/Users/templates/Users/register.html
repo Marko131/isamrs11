@@ -11,7 +11,14 @@
 {% block body %}
     <script>
     $(document).ready(function () {
-
+        $(".effect-22").focusout(function () {
+           if ($(this).val() !== ""){
+               $(this).addClass("has-content");
+           } else {
+               $(this).removeClass("has-content");
+           }
+        });
+        $(".effect-22").css("minWidth", "250px")
     });
     </script>
     <div class="container">
@@ -22,7 +29,7 @@
                     <div class="col">
                         <!-- E-mail -->
                         <div class="form-group">
-                            <input type="email" name="email" id="id_email" class="effect-22"  placeholder="" size="35" required>
+                            <input type="email" name="email" id="id_email" class="effect-22"  placeholder="" required>
                             <label>E-mail</label>
                             <span class="focus-bg"></span>
                         </div>
@@ -50,7 +57,7 @@
                         </div>
                         <!-- Last name -->
                         <div class="form-group">
-                            <input type="text" name="last_name" id="id_last_name" class="effect-22"  placeholder="" size="35" required>
+                            <input type="text" name="last_name" id="id_last_name" class="effect-22" placeholder="" size="35" required>
                             <label>Last name</label>
                             <span class="focus-bg"></span>
                         </div>

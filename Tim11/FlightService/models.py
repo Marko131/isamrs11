@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 
 class Airline(models.Model):
     name = models.CharField(max_length=100)
@@ -69,3 +70,19 @@ def create_seats(sender, instance, created, **kwargs):
         for i in range(instance.row):
             for j in range(instance.col):
                 Seat.objects.create(flight=instance, row=i+1, col=j+1)
+
+
+class FlightReservation(models.Model):
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.pk) + str(self.seat)
+
+
+@receiver(post_save, sender=FlightReservation)
+def take_seat(sender, instance, created, **kwargs):
+    print("uso u funkciju")
+    seat = get_object_or_404(Seat, pk=instance.seat.pk)
+    seat.available = False
+    seat.save()

@@ -4,52 +4,129 @@
 {% block body %}
     <div class="container">
 
-        <div class="row justify-content-center">
-            <div class="mt-5 mb-4">
+        <div class="row justify-content-center" >
+            <div class="mt-5 mb-4 p-2 text-white" style="background-color: rgba(33,37,41,.5);">
                 Flight ID: {{ flight.id }}
             </div>
-
         </div>
 
-        <div class="row justify-content-center">
-
-        </div>
-
-        <div class="row justify-content-center">
-
-            <div id="seats">
-                <script>
-                    let seats = [
-                        {% for seat in flight.seat_set.all %}
-                            {"id": {{ seat.id }},"row": {{seat.row}}, "col": {{seat.col}} },
-                        {% endfor %}
-                    ];
-
-                    let rows = {{ flight.row }};
-                    let cols = {{ flight.col }};
-
-                    for (let i = 1; i <= rows; i++){
-                        for (let j = 1; j <= cols; j++){
-                            let ind = 0;
-                            let current_id = 0;
-                            for (let k = 0; k < seats.length; k++){
-                                if (seats[k].row === i && seats[k].col === j){
-                                    ind = 1;
-                                    current_id = seats[k].id;
-                                }
-                            }
-                            if (ind === 1){
-                                document.write("<div class=\"outer-seat\" id=\"div-inline\"><div class=\"inner-seat\">"+ current_id + "</div></div>");
-                            } else {
-                                document.write("<div class=\"block-outer-seat\" id=\"div-inline\"><div class=\"block-inner-seat\"></div></div>");
-                            }
-                        }
-                        document.write("<br class=\"clearBoth\" />");
-                    }
-                </script>
+        <div class="row">
+            <!-- Left -->
+            <div class="col-md-3 align-self-center py-3" id="left" style="background-color: rgba(33,37,41,.5);">
+                <!-- 1 -->
+                <div class="row ">
+                    <div class="col offset-1">
+                        <div class="outer-seat">
+                            <div class="inner-seat">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center text-white">
+                        Slobodno
+                    </div>
+                </div>
+                <!-- 2 -->
+                <div class="row">
+                    <div class="col offset-1">
+                        <div class="block-outer-seat">
+                            <div class="block-inner-seat">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center text-white">
+                        Zauzeto
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col offset-1">
+                        <div class="outer-seat selected-outerColor">
+                            <div class="inner-seat selected-innerColor">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center text-white">
+                        Izabrano
+                    </div>
+                </div>
             </div>
-            <br class="clearBoth" />
+            <!-- Center -->
+            <div class="col-md-6" id="center" style="background-color: rgba(33,37,41,.5);">
+                <div class="row justify-content-center" >
+                    <div id="seats" class="p-3" style="border-left: 1px solid white; border-right: 1px solid white">
+                        <script>
+                            let seats = [
+                                {% for seat in flight.seat_set.all %}
+                                    {"id": {{ seat.id }}, "row": {{seat.row}}, "col": {{seat.col}}, "avl": "{{seat.available}}"},
+                                {% endfor %}
+                            ];
+                            let rows = {{ flight.row }};
+                            let cols = {{ flight.col }};
+
+                            for (let i = 1; i <= rows; i++){
+                                for (let j = 1; j <= cols; j++){
+                                    let ind = 0;
+                                    let current_id = 0;
+                                    let current_index = 0;
+                                    for (let k = 0; k < seats.length; k++){
+                                        if (seats[k].row === i && seats[k].col === j){
+                                            ind = 1;
+                                            current_id = seats[k].id;
+                                            current_index = k;
+                                        }
+                                    }
+                                    if (ind === 1){
+                                        if (seats[current_index].avl === "True") {
+                                            document.write("<div class=\"outer-seat div-inline\"><div class=\"inner-seat\">"+ current_id + "</div></div>");
+                                        } else {
+                                            document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                        }
+
+                                    } else {
+                                        document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                    }
+                                }
+                                document.write("<br class=\"clearBoth\" />");
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <!-- Right -->
+            <div class="col-md-3" id="right" style="background-color: rgba(33,37,41,.5);">
+                <div class="row p-3" >
+                    <div class="col text-center">
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- <br class="clearBoth" /> -->
         </div>
     </div>
+    <script>
 
+    
+    draw_seats();
+    $(window).resize(draw_seats);
+    function draw_seats(){
+        console.log("asddsads");
+        let w = $("#center").width();
+        let c = {{ flight.col }};
+        let seat_wh = w / (c + 2);
+
+        $(".outer-seat").width(seat_wh);
+        $(".outer-seat").height(seat_wh);
+        $(".inner-seat").width(seat_wh * 0.9);
+        $(".inner-seat").height(seat_wh * 0.9);
+        $(".inner-seat").css("top", seat_wh * 0.05);
+        $(".inner-seat").css("left", seat_wh * 0.05);
+
+        $(".block-outer-seat").width(seat_wh);
+        $(".block-outer-seat").height(seat_wh);
+        $(".block-inner-seat").width(seat_wh * 0.9);
+        $(".block-inner-seat").height(seat_wh * 0.9);
+        $(".block-inner-seat").css("top", seat_wh * 0.05);
+        $(".block-inner-seat").css("left", seat_wh * 0.05);
+    }
+    </script>
 {% endblock %}
