@@ -1,33 +1,56 @@
-{% extends 'base.html' %}
-
-{% block title %}
-    <title>Rent-a-car Services</title>
-{% endblock %}
-
-{% block rentacar_active %}
-    <li class="nav-item active">
-{% endblock %}
-
-{% block navbar_search %}
-    <form action="{% url 'search_rentacars' %}" method="post" class="form-inline my-2 my-lg-0">
-        {% csrf_token %}
-        <input name="rentacar_search" class="form-control mr-sm-2" type="search" placeholder="Search rent-a-car" aria-label="Search">
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
-    </form>
-{% endblock %}
+{% extends 'rentacar_home.html' %}
+{% load staticfiles %}
 
 {% block search_result %}
-    {% for rentacar in rentacars %}
-        <div class="row mb-3 offset-2">
+    {% for vehicle in vehicles %}
+       <div class="row mb-3">
             <div class="col-md-12">
-                <div class="card h-100 w-75">
+                <div class="card h-100" style="background-color: rgba(33,37,41,.5);" >
                     <div class="card-body">
                         <div class="row">
-                            {{ rentacar.name }}
+
+                            <div class="col-md-8  card-body">
+                                <div class="m-2 text-white">
+                                    Manufacturer: {{ vehicle.manufacturer }}
+                                </div>
+                                <div class="m-2 text-white">
+                                    Model name: {{ vehicle.model_name }}
+                                </div>
+                            </div>
+                            <div class="col-md-4 border-left card-body">
+                                <ul class="list-unstyled">
+                                    <li><h3 class="text-white">Price: {{ vehicle.price }} EUR</h3></li>
+                                </ul>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-       </div>
+        </div>
+
+    {% endfor %}
+
+
+    {% for rentacar in rentacars %}
+        <div class="row mb-3 justify-content-center">
+            <div class="card h-100 w-75" style="background-color: rgba(33,37,41,.5);">
+                <div class="row">
+                    <div class="col-3">
+                        <img src="/{{ rentacar.image.url }}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                    </div>
+                    <div class="col-9">
+                        <div class="mt-2 ml-3 pl-1">
+                            <a href="{% url 'rentacar_with_id' rentacar.id %}" class="text-white custom-card-title">
+                                {{ rentacar.name }}
+                            </a>
+                        </div>
+                        <div class="card-body text-white">
+                            {{ rentacar.description }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}

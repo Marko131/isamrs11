@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body %}
+    <div class="container mt-3 w-75" style="background-color: rgba(33,37,41,.5);" >
+        <div class="row">
+            <div class="col">
+                <h2 class="text-white text-center p-3">{{ rentacar.name }}</h2>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-3">
+                <div class="row">
+                    <img class="p-2" src="/{{ rentacar.image.url }}" alt="no-image" width="100%" height="100%">
+                </div>
+
+                <div class="row justify-content-center text-white">
+                    <div class="col text-center" style="word-break: break-word">
+                        {{ rentacar.address }}
+                    </div>
+                </div>
+                <div class="row justify-content-center text-white">
+                    <div class="col" style="word-break: break-all">
+                        {{ rentacar.description }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-9 text-white">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <div class="section-title">
+                            <h3 class="text-white">Vehicles</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-12 text-center">
+                        <div class="owl-partners owl-carousel">
+                            {% for vehicle in rentacar.vehicle_set.all %}
+                                <div class="item">
+                                    <div class="partner-logo"><img src="/{{ vehicle.image.url }}" alt="partners"></div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

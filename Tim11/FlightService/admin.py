@@ -72,7 +72,7 @@ class FlightAdmin(admin.ModelAdmin):
 class AirlineAdministratorAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(AirlineAdministratorAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__name='AirlineAdministrator')
+        form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__isnull=True, is_superuser=False)
         return form
 
 
@@ -97,6 +97,8 @@ class FlightReservationAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(FlightReservationAdmin, self).get_form(request, obj, **kwargs)
+        if request.user.is_superuser:
+            return form
         form.base_fields['seat'].queryset = Seat.objects.filter(flight__airline=request.user.airlineadministrator.airline, available=True)
         return form
 

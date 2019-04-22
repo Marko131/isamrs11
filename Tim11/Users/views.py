@@ -70,8 +70,7 @@ class FriendList(LoginRequiredMixin, View):
                     continue
                 users_tuple.append([user, 3])
 
-        return render(request, 'Users/friends.html', {'users':users_tuple})
-
+        return render(request, 'Users/search_users.html', {'users':users_tuple})
 
 def send_request(request, user_id):
     user_accept = get_object_or_404(CustomUser, pk=user_id)

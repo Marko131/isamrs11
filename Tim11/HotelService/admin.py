@@ -24,7 +24,7 @@ class HotelAdmin(admin.ModelAdmin):
 class HotelAdministratorAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(HotelAdministratorAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__name='HotelAdministrator')
+        form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__isnull=True, is_superuser=False)
         return form
 
 
