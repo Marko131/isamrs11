@@ -23,6 +23,7 @@ class Room(models.Model):
     balcony = models.BooleanField()
     price = models.DecimalField(decimal_places=2, max_digits=10)
     hotel = models.ForeignKey(Hotel, null=False, on_delete=models.CASCADE)
+    image = models.ImageField(blank=True, null=True)
 
     def __str__(self):
         return str(self.pk) + " " + self.type
@@ -34,3 +35,8 @@ class HotelAdministrator(models.Model):
 
     def __str__(self):
         return self.user_profile.email
+
+@receiver(post_save, sender=HotelAdministrator)
+def assign_group(sender, instance, created, **kwargs):
+    group = Group.objects.get(name='HotelAdministrator')
+    group.user_set.add(instance.user_profile)

@@ -1,33 +1,57 @@
-{% extends 'base.html' %}
-
-{% block title %}
-    <title>Hotels</title>
-{% endblock %}
-
-{% block hotel_active %}
-    <li class="nav-item active">
-{% endblock %}
-
-{% block navbar_search %}
-    <form action="{% url 'search_hotels' %}" method="post" class="form-inline my-2 my-lg-0">
-        {% csrf_token %}
-        <input name="hotels_search" class="form-control mr-sm-2" type="search" placeholder="Search hotels" aria-label="Search">
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
-    </form>
-{% endblock %}
+{% extends 'hotels_home.html' %}
+{% load staticfiles %}
 
 {% block search_result %}
-    {% for hotel in hotels %}
-        <div class="row mb-3 offset-2">
+    {% for room in rooms %}
+       <div class="row mb-3">
             <div class="col-md-12">
-                <div class="card h-100 w-75">
+                <div class="card h-100" style="background-color: rgba(33,37,41,.5);" >
                     <div class="card-body">
                         <div class="row">
-                            {{ hotel.name }}
+
+                            <div class="col-md-8  card-body">
+                                <div class="m-2 text-white">
+                                    Type: {{ room.type }}
+                                </div>
+                                <div class="m-2 text-white">
+                                    Capacity: {{ room.capacity }}
+                                </div>
+                                <div class="m-2 text-white">
+                                    Floor: {{ room.floor }}
+                                </div>
+                            </div>
+                            <div class="col-md-4 border-left card-body">
+                                <ul class="list-unstyled">
+                                    <li><h3 class="text-white">Price: {{ room.price }} EUR</h3></li>
+                                </ul>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-       </div>
+        </div>
+    {% endfor %}
+
+    {% for hotel in hotels %}
+        <div class="row mb-3 justify-content-center">
+            <div class="card h-100 w-75" style="background-color: rgba(33,37,41,.5);">
+                <div class="row">
+                    <div class="col-3">
+                        <img src="/{{ hotel.image.url }}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                    </div>
+                    <div class="col-9">
+                        <div class="mt-2 ml-3 pl-1">
+                            <a href="{% url 'hotel_with_id' hotel.id %}" class="text-white custom-card-title">
+                                {{ hotel.name }}
+                            </a>
+                        </div>
+                        <div class="card-body text-white">
+                            {{ hotel.description }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}

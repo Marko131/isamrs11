@@ -25,7 +25,7 @@ class RentACarAdmin(admin.ModelAdmin):
 class RentACarAdministratorAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(RentACarAdministratorAdmin, self).get_form(request, obj, **kwargs)
-        form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__name='RentACarAdministrator')
+        form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__isnull=True, is_superuser=False)
         return form
 
 class BranchAdmin(admin.ModelAdmin):

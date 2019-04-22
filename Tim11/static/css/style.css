@@ -104,51 +104,131 @@ body{
 }
 
 /* Search airlines, hotels, cars, users */
-.effect-23{
-    padding: 7px 15px;
+.effect-8{
     border: 1px solid #ccc;
-    position: relative;
-    background: transparent;
-    z-index: 5;
-    outline: none;
+    padding: 7px 14px 9px;
+    transition: 0.4s;
+    outline:none;
 }
-.effect-23 ~ .focus-bg{
-    position: absolute;
-    left: 0;
+.effect-8 ~ .focus-border:before,
+.effect-8 ~ .focus-border:after{
+    content: ""; position: absolute;
     top: 0;
+    left: 0;
     width: 0;
-    height: 100%;
-    background-color: transparent;
-    transition: 0.4s;
-    z-index: -1;
+    height: 2px;
+    background-color: #007bff;
+    transition: 0.3s;
 }
-.effect-23:focus ~ .focus-bg, .has-content.effect-23 ~ .focus-bg{
-    transition: 0.4s;
-    width: 100%;
-    background-color: white;
-    z-index: 0;
-    color: black;
-    opacity: .9;
+.effect-8 ~ .focus-border:after{
+    top: auto;
+    bottom: 0;
+    left: auto;
+    right: 0;
 }
-.effect-23 ~ label{
+.effect-8 ~ .focus-border i:before,
+.effect-8 ~ .focus-border i:after{
+    content: "";
     position: absolute;
-    left: 0px;
-    width: 100%;
-    top: 1ex;
-    color: #e5e5e5;
-    transition: 0.3s;
-    z-index: 0;
-    letter-spacing: 0.5px;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 0;
+    background-color: #007bff;
+    transition: 0.4s;
 }
-.effect-23:focus ~ label, .has-content.effect-23 ~ label{
-    top: 1ex;
-    left: -11em;
-    color: white;
+.effect-8 ~ .focus-border i:after{
+    left: auto;
+    right: 0;
+    top: auto;
+    bottom: 0;
+}
+.effect-8:focus ~ .focus-border:before,
+.effect-8:focus ~ .focus-border:after{
+    width: 100%;
     transition: 0.3s;
-
+}
+.effect-8:focus ~ .focus-border i:before,
+.effect-8:focus ~ .focus-border i:after{
+    height: 100%;
+    transition: 0.4s;
 }
 #airline_search_button{
+    border-style: solid !important;
+    border-width: 2px;
     border-radius: 0 !important;
-    border-color: #ccc !important;
+    border-color: #007bff !important;
     padding: 7px 13px !important;
+    border-left: none !important;
+    outline: none !important;
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+/* Custom cards */
+.custom-card-title{
+    text-transform: uppercase;
+    font-size: 1.3em;
+}
+
+/*Destinations carousel*/
+.owl-portfolio .owl-controls {
+	position: absolute;
+	left: 0;
+	top: 38%;
+	width: 100%;
+}
+.owl-portfolio .owl-controls .owl-nav [class*=owl-] {
+	padding: 8px 17px;
+	background: rgba(0, 0, 0, 0.18);
+	border-radius: 0;
+	margin: 0;
+	font-size: 20px;
+	z-index:1000;
+}
+.owl-portfolio .owl-controls .owl-nav [class*=owl-]:hover {
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+}
+.owl-portfolio .owl-controls .owl-prev {
+	float: left;
+}
+.owl-portfolio .owl-controls .owl-next {
+	float: right;
+}
+.owl-portfolio-item {
+	text-align: center;
+	display: inline-block;
+}
+.partner-logo {
+	height: 80px;
+	text-align: center;
+	display: inline-block;
+}
+.partner-logo img {
+	height: 100%;
+	width: auto !important;
+}
+.owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span {
+    background: #007bff;
+}
+.owl-theme .owl-dots .owl-dot span {
+    width: 30px;
+    height: 5px;
+    margin: 15px 7px 0 7px;
+    background: #d6d6d6;
+    display: block;
+    -webkit-backface-visibility: visible;
+    -webkit-transition: opacity 200ms ease;
+    -moz-transition: opacity 200ms ease;
+    -ms-transition: opacity 200ms ease;
+    -o-transition: opacity 200ms ease;
+    transition: opacity 200ms ease;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 0;
+}
+.owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span {
+    background: #007bff;
 }

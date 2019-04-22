@@ -40,6 +40,12 @@ class AirlineAdministrator(models.Model):
         return self.user_profile.email
 
 
+@receiver(post_save, sender=AirlineAdministrator)
+def assign_group(sender, instance, created, **kwargs):
+    group = Group.objects.get(name='AirlineAdministrator')
+    group.user_set.add(instance.user_profile)
+
+
 class Flight(models.Model):
     destination_from = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='destination_from')
     destination_to = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='destination_to')

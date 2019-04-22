@@ -36,6 +36,7 @@ class Vehicle(models.Model):
     manufacturer = models.CharField(max_length=100)
     model_name = models.CharField(max_length=100)
     rentacar = models.ForeignKey(RentACar, on_delete=models.CASCADE)
+    image = models.ImageField(blank=True, null=True)
 
     def __str__(self):
         return self.manufacturer + " " + self.model_name
@@ -46,3 +47,9 @@ class RentACarAdministrator(models.Model):
 
     def __str__(self):
         return self.user_profile.email
+
+
+@receiver(post_save, sender=RentACarAdministrator)
+def assign_group(sender, instance, created, **kwargs):
+    group = Group.objects.get(name='RentACarAdministrator')
+    group.user_set.add(instance.user_profile)

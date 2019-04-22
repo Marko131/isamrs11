@@ -18,6 +18,8 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from Users import views as user_views
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,3 +37,5 @@ urlpatterns = [
     path('accept_request/<int:request_id>', user_views.accept_request, name='accept_request'),
     path('remove_friend/<int:user_id>', user_views.remove_friend, name='remove_friend'),
 ]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
