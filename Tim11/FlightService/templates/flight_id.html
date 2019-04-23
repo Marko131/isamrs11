@@ -19,12 +19,34 @@
                 <div class="row ">
                     <div class="col offset-1">
                         <div class="outer-seat-template">
-                            <div class="inner-seat">
+                            <div class="inner-seat-first">
                             </div>
                         </div>
                     </div>
                     <div class="col d-flex align-items-center text-white">
-                        Slobodno
+                        First
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col offset-1">
+                        <div class="outer-seat-template">
+                            <div class="inner-seat-business">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center text-white">
+                        Business
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col offset-1">
+                        <div class="outer-seat-template">
+                            <div class="inner-seat-economy">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center text-white">
+                        Economy
                     </div>
                 </div>
                 <!-- 2 -->
@@ -36,49 +58,52 @@
                         </div>
                     </div>
                     <div class="col d-flex align-items-center text-white">
-                        Zauzeto
+                        Taken
                     </div>
                 </div>
                 <div class="row">
                     <div class="col offset-1">
-                        <div class="outer-seat selected-outerColor">
-                            <div class="inner-seat selected-innerColor">
+                        <div class="outer-seat-economy selected-outerColor">
+                            <div class="inner-seat-economy selected-innerColor">
                             </div>
                         </div>
                     </div>
                     <div class="col d-flex align-items-center text-white">
-                        Izabrano
+                        Selected
                     </div>
                 </div>
             </div>
             <!-- Center -->
             <div class="col-md-6" id="center" style="background-color: rgba(33,37,41,.5);border-left: 1px solid white; border-right: 1px solid white">
                 <div class="row justify-content-center" >
-                    <div id="seats" class="p-3" style="">
+                    <div id="seats" class="p-3">
                         <script>
-                            let seats = [
+                            let seats_first = [
                                 {% for seat in flight.seat_set.all %}
-                                    {"id": {{ seat.id }}, "row": {{seat.row}}, "col": {{seat.col}}, "avl": "{{seat.available}}"},
+                                    {% if seat.type == "First" %}
+                                        {"id": {{ seat.id }}, "row": {{seat.row}}, "col": {{seat.col}}, "avl": "{{seat.available}}", "type": "{{seat.type}}"},
+                                    {% endif %}
                                 {% endfor %}
                             ];
-                            let rows = {{ flight.row }};
-                            let cols = {{ flight.col }};
+                            let rows_first = {{ flight.rows_first }};
+                            let cols_first = {{ flight.cols_first }};
 
-                            for (let i = 1; i <= rows; i++){
-                                for (let j = 1; j <= cols; j++){
+                            for (let i = 1; i <= rows_first; i++){
+                                document.write('<div class="row justify-content-center">');
+                                for (let j = 1; j <= cols_first; j++){
                                     let ind = 0;
                                     let current_id = 0;
                                     let current_index = 0;
-                                    for (let k = 0; k < seats.length; k++){
-                                        if (seats[k].row === i && seats[k].col === j){
+                                    for (let k = 0; k < seats_first.length; k++){
+                                        if (seats_first[k].row === i && seats_first[k].col === j){
                                             ind = 1;
-                                            current_id = seats[k].id;
+                                            current_id = seats_first[k].id;
                                             current_index = k;
                                         }
                                     }
                                     if (ind === 1){
-                                        if (seats[current_index].avl === "True") {
-                                            document.write("<div class=\"outer-seat div-inline\"><div class=\"inner-seat\">"+ current_id + "</div></div>");
+                                        if (seats_first[current_index].avl === "True") {
+                                            document.write("<div class=\"outer-seat-first div-inline\"><div class=\"inner-seat-first\"></div></div>");
                                         } else {
                                             document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
                                         }
@@ -88,6 +113,85 @@
                                     }
                                 }
                                 document.write("<br class=\"clearBoth\" />");
+                                document.write("</div>");
+                            }
+
+
+                            let seats_business = [
+                                {% for seat in flight.seat_set.all %}
+                                    {% if seat.type == "Business" %}
+                                        {"id": {{ seat.id }}, "row": {{seat.row}}, "col": {{seat.col}}, "avl": "{{seat.available}}", "type": "{{seat.type}}"},
+                                    {% endif %}
+                                {% endfor %}
+                            ];
+                            let rows_business = {{ flight.rows_business }};
+                            let cols_business = {{ flight.cols_business }};
+
+                            for (let i = 1; i <= rows_business; i++){
+                                document.write('<div class="row justify-content-center">');
+                                for (let j = 1; j <= cols_business; j++){
+                                    let ind = 0;
+                                    let current_id = 0;
+                                    let current_index = 0;
+                                    for (let k = 0; k < seats_business.length; k++){
+                                        if (seats_business[k].row === i && seats_business[k].col === j){
+                                            ind = 1;
+                                            current_id = seats_business[k].id;
+                                            current_index = k;
+                                        }
+                                    }
+                                    if (ind === 1){
+                                        if (seats_business[current_index].avl === "True") {
+                                            document.write("<div class=\"outer-seat-business div-inline\"><div class=\"inner-seat-business\"></div></div>");
+                                        } else {
+                                            document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                        }
+
+                                    } else {
+                                        document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                    }
+                                }
+                                document.write("<br class=\"clearBoth\" />");
+                                document.write("</div>");
+                            }
+
+
+                            let seats_economy = [
+                                {% for seat in flight.seat_set.all %}
+                                    {% if seat.type == "Economy" %}
+                                        {"id": {{ seat.id }}, "row": {{seat.row}}, "col": {{seat.col}}, "avl": "{{seat.available}}", "type": "{{seat.type}}"},
+                                    {% endif %}
+                                {% endfor %}
+                            ];
+                            let rows_economy = {{ flight.rows_economy }};
+                            let cols_economy = {{ flight.cols_economy }};
+
+                            for (let i = 1; i <= rows_economy; i++){
+                                document.write('<div class="row justify-content-center">');
+                                for (let j = 1; j <= cols_economy; j++){
+                                    let ind = 0;
+                                    let current_id = 0;
+                                    let current_index = 0;
+                                    for (let k = 0; k < seats_economy.length; k++){
+                                        if (seats_economy[k].row === i && seats_economy[k].col === j){
+                                            ind = 1;
+                                            current_id = seats_economy[k].id;
+                                            current_index = k;
+                                        }
+                                    }
+                                    if (ind === 1){
+                                        if (seats_economy[current_index].avl === "True") {
+                                            document.write("<div class=\"outer-seat-economy div-inline\"><div class=\"inner-seat-economy\"></div></div>");
+                                        } else {
+                                            document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                        }
+
+                                    } else {
+                                        document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                    }
+                                }
+                                document.write("<br class=\"clearBoth\" />");
+                                document.write("</div>");
                             }
                         </script>
                     </div>
@@ -126,20 +230,34 @@
     draw_seats();
     $(window).resize(draw_seats);
     function draw_seats(){
-        console.log("asddsads");
         let w = $("#center").width();
-        let c = {{ flight.col }};
+        let c = Math.max({{ flight.cols_business }}, {{ flight.cols_first }}, {{ flight.cols_economy }});
+        console.log(c);
         let seat_wh = w * 0.65 / c;
 
         $(".outer-seat-template").width(seat_wh);
         $(".outer-seat-template").height(seat_wh);
 
-        $(".outer-seat").width(seat_wh);
-        $(".outer-seat").height(seat_wh);
-        $(".inner-seat").width(seat_wh * 0.9);
-        $(".inner-seat").height(seat_wh * 0.9);
-        $(".inner-seat").css("top", seat_wh * 0.05);
-        $(".inner-seat").css("left", seat_wh * 0.05);
+        $(".outer-seat-first").width(seat_wh);
+        $(".outer-seat-first").height(seat_wh);
+        $(".inner-seat-first").width(seat_wh * 0.9);
+        $(".inner-seat-first").height(seat_wh * 0.9);
+        $(".inner-seat-first").css("top", seat_wh * 0.05);
+        $(".inner-seat-first").css("left", seat_wh * 0.05);
+
+        $(".outer-seat-business").width(seat_wh);
+        $(".outer-seat-business").height(seat_wh);
+        $(".inner-seat-business").width(seat_wh * 0.9);
+        $(".inner-seat-business").height(seat_wh * 0.9);
+        $(".inner-seat-business").css("top", seat_wh * 0.05);
+        $(".inner-seat-business").css("left", seat_wh * 0.05);
+
+        $(".outer-seat-economy").width(seat_wh);
+        $(".outer-seat-economy").height(seat_wh);
+        $(".inner-seat-economy").width(seat_wh * 0.9);
+        $(".inner-seat-economy").height(seat_wh * 0.9);
+        $(".inner-seat-economy").css("top", seat_wh * 0.05);
+        $(".inner-seat-economy").css("left", seat_wh * 0.05);
 
         $(".block-outer-seat").width(seat_wh);
         $(".block-outer-seat").height(seat_wh);

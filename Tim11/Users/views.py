@@ -7,11 +7,11 @@ from django.views import View
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 def register(request):
     if request.method == 'POST':
-        print(request.POST)
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
