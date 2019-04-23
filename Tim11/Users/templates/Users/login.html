@@ -25,6 +25,18 @@
             <form id="login_form" method="post" class="mx-5 my-3 p-5 text-white" style="background-color: rgba(33,37,41,.5);">
                 {% csrf_token %}
 
+                {% if messages %}
+                        <div class="form-row m-auto">
+                            <div class="col">
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
                 {% if form.errors %}
                 <div class="form-row m-auto">
                     <div class="col">

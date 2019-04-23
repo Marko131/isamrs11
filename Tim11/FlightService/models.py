@@ -56,8 +56,12 @@ class Flight(models.Model):
     #flight_connnections
     price = models.DecimalField(decimal_places=2, max_digits=10)
     airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
-    row = models.PositiveIntegerField(default=1)
-    col = models.PositiveIntegerField(default=1)
+    rows_economy = models.PositiveIntegerField(default=0)
+    cols_economy = models.PositiveIntegerField(default=0)
+    rows_business = models.PositiveIntegerField(default=0)
+    cols_business = models.PositiveIntegerField(default=0)
+    rows_first = models.PositiveIntegerField(default=0)
+    cols_first = models.PositiveIntegerField(default=0)
 
 
 class Seat(models.Model):
@@ -65,17 +69,24 @@ class Seat(models.Model):
     available = models.BooleanField(default=True)
     row = models.PositiveIntegerField()
     col = models.PositiveIntegerField()
+    type = models.CharField(max_length=10, default="")
 
     def __str__(self):
-        return f'Flight {self.flight.id} - {self.row} {self.col}'
+        return f'Flight {self.flight.id} - {self.type} {self.row} {self.col}'
 
 
 @receiver(post_save, sender=Flight)
 def create_seats(sender, instance, created, **kwargs):
     if created:
-        for i in range(instance.row):
-            for j in range(instance.col):
-                Seat.objects.create(flight=instance, row=i+1, col=j+1)
+        for i in range(instance.rows_economy):
+            for j in range(instance.cols_economy):
+                Seat.objects.create(flight=instance, row=i+1, col=j+1, type="Economy")
+        for i in range(instance.rows_business):
+            for j in range(instance.cols_business):
+                Seat.objects.create(flight=instance, row=i+1, col=j+1, type="Business")
+        for i in range(instance.rows_first):
+            for j in range(instance.cols_first):
+                Seat.objects.create(flight=instance, row=i+1, col=j+1, type="First")
 
 
 class FlightReservation(models.Model):
@@ -88,7 +99,6 @@ class FlightReservation(models.Model):
 
 @receiver(post_save, sender=FlightReservation)
 def take_seat(sender, instance, created, **kwargs):
-    print("uso u funkciju")
     seat = get_object_or_404(Seat, pk=instance.seat.pk)
     seat.available = False
     seat.save()
