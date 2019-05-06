@@ -8,6 +8,8 @@ from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import PasswordChangeForm
+from FlightService.models import FlightReservation
+
 
 
 def register(request):
@@ -106,3 +108,16 @@ def remove_friend(request, user_id):
     friends2.friend_list.remove(request.user)
 
     return HttpResponse('')
+
+
+def my_reservations(request):
+    flight_reservations = FlightReservation.objects.filter(user=request.user)
+    print(flight_reservations)
+    return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations})
+
+
+def cancel_resevation(request, reservation_id):
+    flight_reservation = get_object_or_404(FlightReservation, pk=reservation_id)
+    flight_reservation.user = None
+    flight_reservation.save()
+    return redirect('my_reservations')

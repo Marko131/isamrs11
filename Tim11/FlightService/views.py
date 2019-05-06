@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Airline, Flight, FlightReservation
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Q
 
 def airlines(request):
     return render(request, 'airlines_home.html')
@@ -51,3 +51,70 @@ def reserve(request, reservation_id):
     reservation.user = request.user
     reservation.save()
     return render(request, 'airlines_home.html')
+
+def flight_service_reports(request):
+    print(datetime.today())
+    print(datetime.today() - timedelta(days=1))
+    today = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=1))
+    yesterday = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=1)) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=2))
+    twodaysago = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=2)) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=3))
+    threedaysago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(days=3)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(days=4))
+    fourdaysago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(days=4)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(days=5))
+    fivedaysago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(days=5)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(days=6))
+
+    oneweekago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=1))
+    twoweeksago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=1)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=2))
+    threeweeksago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=2)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=3))
+    fourweeksago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=3)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4))
+
+    onemonthago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4))
+    twomonthsago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=4)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=8))
+    threemonthsago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=8)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=12))
+    fourmonthsago = FlightReservation.objects.filter(
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=12)) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=16))
+
+    days = [
+        'Today',
+        'Yesterday',
+        '2 days ago',
+        '3 days ago',
+        '4 days ago',
+        '5 days ago',
+    ]
+    weeks = [
+        'One week ago',
+        'Two weeks ago',
+        'Three weeks ago',
+        'Four weeks ago',
+    ]
+    months = [
+        'One month ago',
+        'Two months ago',
+        'Three months ago',
+        'Four months ago'
+    ]
+    daysCount = [today.count(), yesterday.count(), twodaysago.count(), threedaysago.count(), fourdaysago.count(),fivedaysago.count()]
+    weeksCount = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
+    monthsCount = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
+    return JsonResponse({'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months, 'monthsCount': monthsCount})
