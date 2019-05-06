@@ -1,11 +1,10 @@
 from django.db import models
 from Users.models import CustomUser
-from django.dispatch import receiver
-from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
+
 
 class Airline(models.Model):
     name = models.CharField(max_length=100)

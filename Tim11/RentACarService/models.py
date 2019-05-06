@@ -3,8 +3,8 @@ from Users.models import CustomUser
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
+from django.shortcuts import get_object_or_404
 
-# Create your models here.
 
 class RentACar(models.Model):
     name = models.CharField(max_length=100)
@@ -53,3 +53,13 @@ class RentACarAdministrator(models.Model):
 def assign_group(sender, instance, created, **kwargs):
     group = Group.objects.get(name='RentACarAdministrator')
     group.user_set.add(instance.user_profile)
+
+
+class VehicleReservation(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, null=True, blank=True)
+    reserved_from = models.DateTimeField()
+    reserved_to = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.pk) + " " + str(self.vehicle) + " " + str(self.user)
