@@ -21,6 +21,7 @@ from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('FlightService.urls')),
@@ -36,6 +37,9 @@ urlpatterns = [
     path('ignore_request/<int:request_id>', user_views.ignore_request, name='ignore_request'),
     path('accept_request/<int:request_id>', user_views.accept_request, name='accept_request'),
     path('remove_friend/<int:user_id>', user_views.remove_friend, name='remove_friend'),
+
+    path('my_reservations', user_views.my_reservations, name='my_reservations'),
+    path('cancel_resevation/<int:reservation_id>', user_views.cancel_resevation, name='cancel_resevation'),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
