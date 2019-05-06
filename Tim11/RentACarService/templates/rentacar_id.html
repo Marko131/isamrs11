@@ -49,6 +49,43 @@
                 </div>
             </div>
         </div>
+
+        <div class="row mt-3 justify-content-center">
+            <h3 class="text-center text-white">Quick reservations</h3>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                {% for reservation in reservations %}
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="card h-100" style="background-color: rgba(33,37,41,.5);" >
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8  card-body">
+                                            <div class="m-2 text-white">
+                                                {{ reservation.vehicle.manufacturer }} {{ reservation.vehicle.model_name }}
+                                            </div>
+                                            <div class="m-2 text-white">
+                                                {{ reservation.reserved_from }} - {{ reservation.reserved_to }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 border-left card-body">
+                                            <ul class="list-unstyled">
+                                                <li><h3 class="text-white">Price: {{ reservation.vehicle.price }} EUR</h3></li>
+                                            </ul>
+                                            <a href="{% url 'reserve' reservation.id %}" class="btn btn-primary">Reserve</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
+
+
 
 {% endblock %}
