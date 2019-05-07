@@ -10,7 +10,7 @@
 			    }
 			});
 		});
-		function rate(event, flight_id, rate){
+		function rateFlight(event, flight_id, rate){
 
 		    $.ajax({
                 method: "POST",
@@ -33,11 +33,34 @@
             });
 
 		}
+		function rateVehicle(event, vehicle_id, rate){
+
+		    $.ajax({
+                method: "POST",
+                url: "/rentacar/rate_vehicle",
+                dataType: "json",
+                data: {'vehicle_id': vehicle_id, 'rate': rate, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+                success: function(response){
+
+                    let index = Array.prototype.indexOf.call(event.target.parentElement.children, event.target) + 1;
+                    for (let i = 0; i < event.target.parentElement.childElementCount; i++){
+                        event.target.parentElement.children[i].classList.remove("text-primary");
+                    }
+                    for (let i = 0; i < index; i++){
+                        event.target.parentElement.children[i].classList.add("text-primary");
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+
+		}
 	</script>
     <div class="container mt-5">
         <div class="row">
             <div class="col">
-                {% if flight_reservations %}
+                {% if flight_reservations or vehicle_reservations %}
                     <h2 class="h2 text-center">Reservations</h2>
                     {% for flight_reservation in flight_reservations %}
                         <div class="row justify-content-center">
@@ -56,37 +79,90 @@
                                             {% csrf_token %}
 
                                             {% if flight_reservation.get_rate > 0 %}
-                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 1)"></i>
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 1)"></i>
                                             {% else %}
-                                                <i class="fa fa-star" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 1)"></i>
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 1)"></i>
                                             {% endif %}
 
                                             {% if flight_reservation.get_rate > 1 %}
-                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 2)"></i>
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 2)"></i>
                                             {% else %}
-                                                <i class="fa fa-star" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 2)"></i>
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 2)"></i>
                                             {% endif %}
 
                                             {% if flight_reservation.get_rate > 2 %}
-                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 3)"></i>
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 3)"></i>
                                             {% else %}
-                                                <i class="fa fa-star" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 3)"></i>
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 3)"></i>
                                             {% endif %}
 
                                             {% if flight_reservation.get_rate > 3 %}
-                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 4)"></i>
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 4)"></i>
                                             {% else %}
-                                                <i class="fa fa-star" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 4)"></i>
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 4)"></i>
                                             {% endif %}
 
                                             {% if flight_reservation.get_rate > 4 %}
-                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 5)"></i>
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 5)"></i>
                                             {% else %}
-                                                <i class="fa fa-star" aria-hidden="true" onclick="rate(event, {{ flight_reservation.seat.flight_id }}, 5)"></i>
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateFlight(event, {{ flight_reservation.seat.flight_id }}, 5)"></i>
                                             {% endif %}
 
                                         {% else %}
                                             <a href="{% url 'cancel_resevation' flight_reservation.pk %}" class="btn btn-danger float-right">Cancel reservation</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    {% endfor %}
+                    {% for vehicle_reservation in vehicle_reservations %}
+                        <div class="row justify-content-center">
+                        <div class="col card my-2" style="max-width: 40rem;background-color: rgba(33,37,41,.5);">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-8 d-flex align-items-center text-white">
+                                        {{ vehicle_reservation.vehicle.manufacturer }} {{ vehicle_reservation.vehicle.model_name }}
+                                        <br/>
+                                        {{ vehicle_reservation.reserved_from }} - {{ vehicle_reservation.reserved_to }}
+                                    </div>
+                                    <div class="col-4 d-flex align-items-center">
+                                        {% if vehicle_reservation.is_past %}
+                                            {% csrf_token %}
+
+                                            {% if vehicle_reservation.get_rate > 0 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 1)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 1)"></i>
+                                            {% endif %}
+
+                                            {% if vehicle_reservation.get_rate > 1 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 2)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 2)"></i>
+                                            {% endif %}
+
+                                            {% if vehicle_reservation.get_rate > 2 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 3)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 3)"></i>
+                                            {% endif %}
+
+                                            {% if vehicle_reservation.get_rate > 3 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 4)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 4)"></i>
+                                            {% endif %}
+
+                                            {% if vehicle_reservation.get_rate > 4 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 5)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateVehicle(event, {{ vehicle_reservation.vehicle_id }}, 5)"></i>
+                                            {% endif %}
+
+                                        {% else %}
+                                            <a href="{% url 'cancel_reservation_vehicle' vehicle_reservation.pk %}" class="btn btn-danger float-right">Cancel reservation</a>
                                         {% endif %}
                                     </div>
                                 </div>

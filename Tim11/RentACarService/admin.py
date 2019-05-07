@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RentACar, Branch, Vehicle, RentACarAdministrator, VehicleReservation
+from .models import RentACar, Branch, Vehicle, RentACarAdministrator, VehicleReservation, VehicleRating
 from django.contrib import admin
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
@@ -87,3 +87,4 @@ admin.site.register(RentACarAdministrator, RentACarAdministratorAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(VehicleReservation, VehicleReservationAdmin)
+admin.site.register(VehicleRating)
