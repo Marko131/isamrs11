@@ -1,7 +1,7 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Airline, Flight, FlightReservation
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Airline, Flight, FlightReservation, FlightRating
 from datetime import datetime, timedelta
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -53,8 +53,6 @@ def reserve(request, reservation_id):
     return render(request, 'airlines_home.html')
 
 def flight_service_reports(request):
-    print(datetime.today())
-    print(datetime.today() - timedelta(days=1))
     today = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=1))
     yesterday = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=1)) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=2))
     twodaysago = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=2)) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=3))
@@ -118,3 +116,13 @@ def flight_service_reports(request):
     weeksCount = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
     monthsCount = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
     return JsonResponse({'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months, 'monthsCount': monthsCount})
+
+
+def rate_flight(request):
+    r = request.POST.get('rate')
+    flight = Flight.objects.get(pk=request.POST.get('flight_id'))
+    flight_rating = FlightRating.objects.get_or_create(flight=flight, user=request.user)
+    flight_rating = FlightRating.objects.get(flight=flight, user=request.user)
+    flight_rating.rate = r
+    flight_rating.save()
+    return JsonResponse({})

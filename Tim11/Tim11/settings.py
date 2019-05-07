@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jet',
     'Users.apps.UsersConfig',
     'FlightService.apps.FlightserviceConfig',
     'HotelService.apps.HotelserviceConfig',
