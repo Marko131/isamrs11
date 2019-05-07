@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Destination, Airline, AirlineAdministrator, Flight, Seat, FlightReservation
+from .models import Destination, Airline, AirlineAdministrator, Flight, Seat, FlightReservation, FlightRating
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
 
@@ -109,3 +109,4 @@ admin.site.register(Airline, AirlineAdmin)
 admin.site.register(Flight, FlightAdmin)
 admin.site.register(Seat, SeatAdmin)
 admin.site.register(FlightReservation, FlightReservationAdmin)
+admin.site.register(FlightRating)

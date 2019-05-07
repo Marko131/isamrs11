@@ -4,7 +4,8 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
-
+from datetime import datetime, timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Airline(models.Model):
     name = models.CharField(max_length=100)
@@ -95,9 +96,26 @@ class FlightReservation(models.Model):
     def __str__(self):
         return str(self.pk) + str(self.seat)
 
+    @property
+    def is_past(self):
+        return datetime.now(timezone.utc) > self.seat.flight.arrival_time
+
+    def get_rate(self):
+        flight_rate = FlightRating.objects.get(user=self.user, flight=self.seat.flight)
+        if flight_rate:
+            return flight_rate.rate
+        return 0
+
 
 @receiver(post_save, sender=FlightReservation)
 def take_seat(sender, instance, created, **kwargs):
     seat = get_object_or_404(Seat, pk=instance.seat.pk)
     seat.available = False
     seat.save()
+
+
+class FlightRating(models.Model):
+    flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rate = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)
+

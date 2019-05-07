@@ -112,7 +112,6 @@ def remove_friend(request, user_id):
 
 def my_reservations(request):
     flight_reservations = FlightReservation.objects.filter(user=request.user)
-    print(flight_reservations)
     return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations})
 
 
