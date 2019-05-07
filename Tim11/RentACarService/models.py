@@ -4,6 +4,8 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
+from datetime import datetime, timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class RentACar(models.Model):
@@ -63,3 +65,19 @@ class VehicleReservation(models.Model):
 
     def __str__(self):
         return str(self.pk) + " " + str(self.vehicle) + " " + str(self.user)
+
+    @property
+    def is_past(self):
+        return datetime.now(timezone.utc) > self.reserved_to
+
+    def get_rate(self):
+        vehicle_rate = VehicleRating.objects.get(user=self.user, vehicle=self.vehicle)
+        if vehicle_rate:
+            return vehicle_rate.rate
+        return 0
+
+
+class VehicleRating(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rate = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)

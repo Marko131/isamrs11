@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import PasswordChangeForm
 from FlightService.models import FlightReservation
+from RentACarService.models import VehicleReservation
 
 
 
@@ -112,11 +113,19 @@ def remove_friend(request, user_id):
 
 def my_reservations(request):
     flight_reservations = FlightReservation.objects.filter(user=request.user)
-    return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations})
+    vehicle_reservations = VehicleReservation.objects.filter(user=request.user)
+    return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations, 'vehicle_reservations': vehicle_reservations})
 
 
 def cancel_resevation(request, reservation_id):
     flight_reservation = get_object_or_404(FlightReservation, pk=reservation_id)
     flight_reservation.user = None
     flight_reservation.save()
+    return redirect('my_reservations')
+
+
+def cancel_reservation_vehicle(request, reservation_id):
+    vehicle_reservation = get_object_or_404(VehicleReservation, pk=reservation_id)
+    vehicle_reservation.user = None
+    vehicle_reservation.save()
     return redirect('my_reservations')

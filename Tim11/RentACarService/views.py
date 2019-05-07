@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import RentACar, Vehicle, VehicleReservation
+from .models import RentACar, Vehicle, VehicleReservation, VehicleRating
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from django.http import JsonResponse
@@ -103,3 +103,13 @@ def rentacar_service_reports(request):
     return JsonResponse(
         {'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months,
          'monthsCount': monthsCount})
+
+
+def rate_vehicle(request):
+    r = request.POST.get('rate')
+    vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
+    vehicle_rating = VehicleRating.objects.get_or_create(vehicle=vehicle, user=request.user)
+    vehicle_rating = VehicleRating.objects.get(vehicle=vehicle, user=request.user)
+    vehicle_rating.rate = r
+    vehicle_rating.save()
+    return JsonResponse({})
