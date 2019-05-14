@@ -1,6 +1,71 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
+{% block scripts %}
+    <script>
+        $(document).ready(function(){
+            $(".inner-seat-first").on("click", selectSeat);
+            $(".inner-seat-business").on("click", selectSeat);
+            $(".inner-seat-economy").on("click", selectSeat);
+        });
+        selected_seats = [];
+        Array.prototype.remove = function() {
+            var what, a = arguments, L = a.length, ax;
+            while (L && this.length) {
+                what = a[--L];
+                while ((ax = this.indexOf(what)) !== -1) {
+                    this.splice(ax, 1);
+                }
+            }
+            return this;
+        };
+        function selectSeat(event){
+            event.target.classList.toggle("selected-innerColor");
+        }
+        function asdf(seat_id, e){
+            if (!selected_seats.includes(seat_id)){
+                selected_seats.push(seat_id);
+            } else {
+                selected_seats.remove(seat_id);
+            }
+            if (selected_seats.length > 1){
+                $("#invite_header").html("<h5>Invite friends</h5>");
+            } else{
+                $("#invite_header").html("");
+            }
+            $("#test").text(selected_seats);
+            inviteFriendInputs();
+        }
+        function inviteFriendInputs(){
+
+            let invite_friends_html = "";
+            for (let i = 1; i < selected_seats.length; i++){
+                invite_friends_html += "Friend " + i.toString();
+                invite_friends_html += "<input type=\"email\" class=\"form-control mt-2\" required=\"required\">";
+            }
+            $("#invite-friends").html(invite_friends_html);
+        }
+        function finish_reservation(){
+            let invited_friends = [];
+            let invitedFriendsCount = document.getElementById("invite-friends").children.length;
+
+            for (let i=0; i < invitedFriendsCount; i++){
+                invited_friends.push(document.getElementById("invite-friends").children[i].value);
+
+            }
+            let passport = document.getElementById("passport_number").value;
+            $.ajax({
+                method: "POST",
+                url: "/finish_flight_reservation",
+                data: {"passport": passport, "seats": selected_seats, "invited_friends": invited_friends, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                success: function(response){
+                    window.location.replace("http://127.0.0.1:8000/my_reservations");
+                }
+            })
+        }
+    </script>
+{% endblock %}
+
 {% block body %}
     <div class="container">
 
@@ -10,6 +75,9 @@
                 <br/>
                 {{ flight.departure_time }}
             </div>
+        </div>
+        <div id="test" class="row justify-content-center">
+            asd
         </div>
 
         <div class="row">
@@ -103,13 +171,13 @@
                                     }
                                     if (ind === 1){
                                         if (seats_first[current_index].avl === "True") {
-                                            document.write("<div class=\"outer-seat-first div-inline\"><div class=\"inner-seat-first\"></div></div>");
+                                            document.write("<div class=\"outer-seat-first div-inline\" onclick=asdf(" +seats_first[current_index].id + ")><div class=\"inner-seat-first\"></div></div>");
                                         } else {
                                             document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
                                         }
 
                                     } else {
-                                        document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                        document.write("<div class=\"block-outer-seat div-inline\" onclick=asdf(" +seats_first[current_index].id + ")><div class=\"block-inner-seat\"></div></div>");
                                     }
                                 }
                                 document.write("<br class=\"clearBoth\" />");
@@ -142,13 +210,13 @@
                                     }
                                     if (ind === 1){
                                         if (seats_business[current_index].avl === "True") {
-                                            document.write("<div class=\"outer-seat-business div-inline\"><div class=\"inner-seat-business\"></div></div>");
+                                            document.write("<div class=\"outer-seat-business div-inline\" onclick=asdf(" +seats_business[current_index].id + ")><div class=\"inner-seat-business\"></div></div>");
                                         } else {
                                             document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
                                         }
 
                                     } else {
-                                        document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                        document.write("<div class=\"block-outer-seat div-inline\" onclick=asdf(" +seats_business[current_index].id + ") ><div class=\"block-inner-seat\"></div></div>");
                                     }
                                 }
                                 document.write("<br class=\"clearBoth\" />");
@@ -181,13 +249,13 @@
                                     }
                                     if (ind === 1){
                                         if (seats_economy[current_index].avl === "True") {
-                                            document.write("<div class=\"outer-seat-economy div-inline\"><div class=\"inner-seat-economy\"></div></div>");
+                                            document.write("<div class=\"outer-seat-economy div-inline\" onclick=asdf(" + seats_economy[current_index].id + ")><div class=\"inner-seat-economy\"></div></div>");
                                         } else {
-                                            document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                            document.write("<div class=\"block-outer-seat div-inline\" ><div class=\"block-inner-seat\"></div></div>");
                                         }
 
                                     } else {
-                                        document.write("<div class=\"block-outer-seat div-inline\"><div class=\"block-inner-seat\"></div></div>");
+                                        document.write("<div class=\"block-outer-seat div-inline\" onclick=asdf(" +seats_economy[current_index].id + ")><div class=\"block-inner-seat\"></div></div>");
                                     }
                                 }
                                 document.write("<br class=\"clearBoth\" />");
@@ -202,18 +270,17 @@
                 <div class="row p-3">
                     <div class="col text-center text-white">
                         <div class="row justify-content-center">
-                            <h5>Invite friends</h5>
+                            <p>Passport number</p>
+                            <input id="passport_number" class="form-control mb-3">
+                        </div>
+                        <div id="invite_header" class="row justify-content-center">
+
+                        </div>
+                        <div id="invite-friends" class="row justify-content-center mt-3">
+
                         </div>
                         <div class="row justify-content-center mt-3">
-                            <select style="width: 100%;">
-                                <option>Friend1</option>
-                                <option>Friend2</option>
-                                <option>Friend3</option>
-                                <option>Friend4</option>
-                                <option>Friend5</option>
-                                <option>Friend6</option>
-                                <option>Friend7</option>
-                            </select>
+                            <button class="btn btn-primary" onclick="finish_reservation()">Finish Reservation</button>
                         </div>
                     </div>
 
@@ -225,14 +292,11 @@
         </div>
     </div>
     <script>
-
-    
     draw_seats();
     $(window).resize(draw_seats);
     function draw_seats(){
         let w = $("#center").width();
         let c = Math.max({{ flight.cols_business }}, {{ flight.cols_first }}, {{ flight.cols_economy }});
-        console.log(c);
         let seat_wh = w * 0.65 / c;
 
         $(".outer-seat-template").width(seat_wh);

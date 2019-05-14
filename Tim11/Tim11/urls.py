@@ -43,6 +43,8 @@ urlpatterns = [
     path('my_reservations', user_views.my_reservations, name='my_reservations'),
     path('cancel_resevation/<int:reservation_id>', user_views.cancel_resevation, name='cancel_resevation'),
     path('cancel_reservation_vehicle/<int:reservation_id>', user_views.cancel_reservation_vehicle, name='cancel_reservation_vehicle'),
+
+
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

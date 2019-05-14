@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block body %}
+    <div class="container justify-content-center mt-5" style="max-width: 40%;">
+        <div class="row">
+            <form class="col-8 " action="{% url 'accept_invite' reservation_id %}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-9">
+                        <input name="passport" class="form-control" placeholder="Passport number">
+                    </div>
+                    <div class="col-3 ">
+                        <button type="submit" class="btn btn-primary float-right">Accept</button>
+                    </div>
+                </div>
+            </form>
+
+            <form class="col-4" action="{% url 'cancel_invite' reservation_id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Cancel</button>
+            </form>
+        </div>
+
+
+
+    </div>
+{% endblock %}

@@ -1,10 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Airline, Flight, FlightReservation, FlightRating
+from .models import Airline, Flight, FlightReservation, FlightRating, Seat
 from datetime import datetime, timedelta
 from django.http import JsonResponse, HttpResponse
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from Users.models import CustomUser
+import threading
+from django.core.mail import EmailMessage
+from Tim11.settings import EMAIL_HOST_USER
 
 def airlines(request):
     return render(request, 'airlines_home.html')
@@ -49,6 +53,10 @@ def airline_detail(request, airline_id):
 def reserve(request, reservation_id):
     reservation = get_object_or_404(FlightReservation, pk=reservation_id)
     reservation.user = request.user
+    passport = request.POST.get("passport")
+    reservation.passport = passport
+    reservation.accepted = True
+    reservation.creator = True
     reservation.save()
     return render(request, 'airlines_home.html')
 
@@ -126,3 +134,67 @@ def rate_flight(request):
     flight_rating.rate = r
     flight_rating.save()
     return JsonResponse({})
+
+
+def finish_flight_reservation(request):
+    seats = request.POST.getlist('seats[]')
+    invited_friends = request.POST.getlist('invited_friends[]')
+    invited_friends.insert(0, request.user.email)
+    passport = request.POST.get("passport")
+    if not seats or not invited_friends or len(seats) != len(invited_friends):
+        return HttpResponse("error")
+
+    for s, i in zip(seats, invited_friends):
+        if not i:
+            return HttpResponse("Error")
+        seat = Seat.objects.get(pk=s)
+        try:
+            user = CustomUser.objects.get(email=i)
+            if user == request.user:
+                FlightReservation.objects.create(seat=seat, user=user, accepted=False, passport=passport, creator=True, quick=False)
+            else:
+                flight_reservation = FlightReservation.objects.create(seat=seat, user=user, accepted=False, quick=False, creator=False)
+                if not user.is_active:
+                    send_html_mail("Flight invite",
+                                   f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Hram 3 slova </a>",
+                                   [i])
+        except:
+            flight_reservation = FlightReservation.objects.create(seat=seat, user=request.user, accepted=False, creator=False, quick=False)
+            send_html_mail("Flight invite", f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Hram 3 slova </a>", [i])
+    return render(request, "Users/my_reservations.html")
+
+
+def invite(request, reservation_id):
+    get_object_or_404(FlightReservation, pk=reservation_id)
+    return render(request, "invite.html", {"reservation_id": reservation_id})
+
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, html_content, recipient_list):
+        self.subject = subject
+        self.recipient_list = recipient_list
+        self.html_content = html_content
+        threading.Thread.__init__(self)
+
+    def run (self):
+        msg = EmailMessage(self.subject, self.html_content, EMAIL_HOST_USER, self.recipient_list)
+        msg.content_subtype = "html"
+        msg.send()
+
+def send_html_mail(subject, html_content, recipient_list):
+    EmailThread(subject, html_content, recipient_list).start()
+
+
+def accept_invite(request, reservation_id):
+    passport = request.POST.get("passport")
+    flight_reservation = get_object_or_404(FlightReservation, pk=reservation_id)
+    flight_reservation.accepted = True
+    flight_reservation.passport = passport
+    flight_reservation.save()
+    return HttpResponse("")
+
+
+def cancel_invite(request, reservation_id):
+    flight_reservation = get_object_or_404(FlightReservation, pk=reservation_id)
+    flight_reservation.delete()
+    return HttpResponse("")
