@@ -77,7 +77,11 @@
                                             <ul class="list-unstyled">
                                                 <li><h3 class="text-white">Price: {{ reservation.seat.flight.price }} EUR</h3></li>
                                             </ul>
-                                            <a href="{% url 'reserve_flight' reservation.id %}" class="btn btn-primary">Reserve</a>
+                                            <form class="row" action="{% url 'reserve_flight' reservation.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <input class="col-9 form-control" name="passport" placeholder="Passport number" required="required">
+                                                <button class="col-3 btn btn-primary" type="submit">Reserve</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

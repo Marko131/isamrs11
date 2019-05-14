@@ -102,6 +102,12 @@ class FlightReservationAdmin(admin.ModelAdmin):
         form.base_fields['seat'].queryset = Seat.objects.filter(flight__airline=request.user.airlineadministrator.airline, available=True)
         return form
 
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
+
+
+
 
 admin.site.register(AirlineAdministrator, AirlineAdministratorAdmin)
 admin.site.register(Destination, DestinationAdmin)

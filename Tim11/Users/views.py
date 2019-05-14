@@ -112,15 +112,24 @@ def remove_friend(request, user_id):
 
 
 def my_reservations(request):
-    flight_reservations = FlightReservation.objects.filter(user=request.user)
+    flight_reservations = FlightReservation.objects.filter(Q(user=request.user, creator=True, accepted=False) | Q(user=request.user, creator=False, accepted=True))
+    flight_invites = FlightReservation.objects.filter(user=request.user, creator=False, accepted=False)
+
     vehicle_reservations = VehicleReservation.objects.filter(user=request.user)
-    return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations, 'vehicle_reservations': vehicle_reservations})
+    return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations, 'vehicle_reservations': vehicle_reservations, "flight_invites": flight_invites})
 
 
 def cancel_resevation(request, reservation_id):
     flight_reservation = get_object_or_404(FlightReservation, pk=reservation_id)
-    flight_reservation.user = None
-    flight_reservation.save()
+    if flight_reservation.quick:
+        flight_reservation.user = None
+        flight_reservation.passport = ''
+        flight_reservation.accepted = False
+        flight_reservation.creator = False
+        flight_reservation.save()
+    else:
+        flight_reservation.delete()
+
     return redirect('my_reservations')
 
 

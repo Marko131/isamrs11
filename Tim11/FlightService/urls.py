@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import airlines, search_airlines, search_flights, flight_detail, airline_detail, reserve, flight_service_reports,rate_flight
+from .views import *
 from django.views.generic import TemplateView
 urlpatterns = [
     path('', TemplateView.as_view(template_name='airlines_home.html'), name='airlines'),
@@ -10,4 +10,8 @@ urlpatterns = [
     path('reservation/<int:reservation_id>', reserve, name='reserve_flight'),
     path('get_flight_service_reports', flight_service_reports, name='flight_service_reports'),
     path('rate_flight', rate_flight, name='rate_flight'),
+    path('finish_flight_reservation', finish_flight_reservation),
+    path('invite/<int:reservation_id>', invite),
+    path('cancel_invite/<int:reservation_id>', cancel_invite, name='cancel_invite'),
+    path('accept_invite/<int:reservation_id>', accept_invite, name='accept_invite'),
 ]

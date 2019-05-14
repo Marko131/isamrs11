@@ -46,6 +46,13 @@
 	background: #ff0000 ;
     position: absolute;
 }
+.block-outer-seat:hover {
+    cursor: not-allowed;
+}
+.block-inner-seat:hover{
+    cursor: not-allowed;
+}
+
 .div-inline{float: left; }
 
 .outer-seat-first:hover, .outer-seat-business:hover, .outer-seat-economy:hover{

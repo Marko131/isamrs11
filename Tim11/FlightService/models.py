@@ -92,6 +92,10 @@ def create_seats(sender, instance, created, **kwargs):
 class FlightReservation(models.Model):
     seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, null=True, blank=True)
+    accepted = models.BooleanField(default=False)
+    passport = models.CharField(max_length=20, default='', null=True, blank=True)
+    quick = models.BooleanField(default=False)
+    creator = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.pk) + str(self.seat)
@@ -105,6 +109,11 @@ class FlightReservation(models.Model):
         if flight_rate:
             return flight_rate.rate
         return 0
+
+    def delete(self, using=None, keep_parents=False):
+        self.seat.available = True
+        self.seat.save()
+        super(FlightReservation, self).delete()
 
 
 @receiver(post_save, sender=FlightReservation)
