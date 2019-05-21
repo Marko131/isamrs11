@@ -9,6 +9,8 @@ from Users.models import CustomUser
 import threading
 from django.core.mail import EmailMessage
 from Tim11.settings import EMAIL_HOST_USER
+from django.db import transaction
+
 
 def airlines(request):
     return render(request, 'airlines_home.html')
@@ -55,10 +57,11 @@ def reserve(request, reservation_id):
     reservation.user = request.user
     passport = request.POST.get("passport")
     reservation.passport = passport
-    reservation.accepted = True
+    reservation.accepted = False
     reservation.creator = True
     reservation.save()
     return render(request, 'airlines_home.html')
+
 
 def flight_service_reports(request):
     today = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=1))
@@ -136,32 +139,43 @@ def rate_flight(request):
     return JsonResponse({})
 
 
+@transaction.atomic
 def finish_flight_reservation(request):
     seats = request.POST.getlist('seats[]')
     invited_friends = request.POST.getlist('invited_friends[]')
     invited_friends.insert(0, request.user.email)
     passport = request.POST.get("passport")
     if not seats or not invited_friends or len(seats) != len(invited_friends):
-        return HttpResponse("error")
-
+        response = JsonResponse({'Error': 'No selected seats'})
+        response.status_code = 403
+        return response
+    my_reservation_id = None
     for s, i in zip(seats, invited_friends):
         if not i:
-            return HttpResponse("Error")
+            response = JsonResponse({'Error': 'Number of seats and passengers doesn\'t match'})
+            response.status_code = 403
+            return response
         seat = Seat.objects.get(pk=s)
         try:
             user = CustomUser.objects.get(email=i)
             if user == request.user:
-                FlightReservation.objects.create(seat=seat, user=user, accepted=False, passport=passport, creator=True, quick=False)
+                fr = FlightReservation.objects.create(seat=seat, user=user, accepted=False, passport=passport, creator=True, quick=False)
+                my_reservation_id = fr.pk
             else:
                 flight_reservation = FlightReservation.objects.create(seat=seat, user=user, accepted=False, quick=False, creator=False)
                 if not user.is_active:
                     send_html_mail("Flight invite",
-                                   f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Hram 3 slova </a>",
+                                   f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>",
                                    [i])
         except:
-            flight_reservation = FlightReservation.objects.create(seat=seat, user=request.user, accepted=False, creator=False, quick=False)
-            send_html_mail("Flight invite", f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Hram 3 slova </a>", [i])
-    return render(request, "Users/my_reservations.html")
+            flight_reservation = FlightReservation.objects.create(seat=seat, user=None, accepted=False, creator=False, quick=False)
+            send_html_mail("Flight invite", f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>", [i])
+    if my_reservation_id is not None:
+        response = JsonResponse({'passengers': len(seats), 'flight_reservation_id': my_reservation_id})
+    else:
+        response = JsonResponse({'Error': 'Something went wrong'})
+        response.status_code = 403
+    return response
 
 
 def invite(request, reservation_id):
@@ -181,6 +195,7 @@ class EmailThread(threading.Thread):
         msg.content_subtype = "html"
         msg.send()
 
+
 def send_html_mail(subject, html_content, recipient_list):
     EmailThread(subject, html_content, recipient_list).start()
 
@@ -191,10 +206,10 @@ def accept_invite(request, reservation_id):
     flight_reservation.accepted = True
     flight_reservation.passport = passport
     flight_reservation.save()
-    return HttpResponse("")
+    return redirect("airlines")
 
 
 def cancel_invite(request, reservation_id):
     flight_reservation = get_object_or_404(FlightReservation, pk=reservation_id)
     flight_reservation.delete()
-    return HttpResponse("")
+    return redirect("airlines")

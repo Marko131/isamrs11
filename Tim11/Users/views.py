@@ -9,8 +9,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import PasswordChangeForm
 from FlightService.models import FlightReservation
+from HotelService.models import HotelReservation
 from RentACarService.models import VehicleReservation
-
+import threading
+from django.core.mail import EmailMessage
+from Tim11.settings import EMAIL_HOST_USER
 
 
 def register(request):
@@ -19,13 +22,44 @@ def register(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            messages.success(request, 'Your account has been created')
+            email = form.cleaned_data.get('email')
+            user = CustomUser.objects.get(email=email)
+            user.is_active = False
+            user.save()
+            send_html_mail("Account activation",
+                           f"<a href=\"http://127.0.0.1:8000/activate/{user.id}\"> Click here to activate your account. </a>",
+                           [user.email])
+            messages.success(request, 'Activate account before logging in!')
             return redirect('login')
         else:
             return render(request, 'Users/register.html', {'form': form})
     else:
         form = UserRegisterForm()
     return render(request, 'Users/register.html', {'form': form})
+
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, html_content, recipient_list):
+        self.subject = subject
+        self.recipient_list = recipient_list
+        self.html_content = html_content
+        threading.Thread.__init__(self)
+
+    def run(self):
+        msg = EmailMessage(self.subject, self.html_content, EMAIL_HOST_USER, self.recipient_list)
+        msg.content_subtype = "html"
+        msg.send()
+
+
+def send_html_mail(subject, html_content, recipient_list):
+    EmailThread(subject, html_content, recipient_list).start()
+
+
+def activate(request, user_id):
+    user = CustomUser.objects.get(pk=user_id)
+    user.is_active = True
+    user.save()
+    return redirect("login")
 
 
 @login_required
@@ -57,8 +91,8 @@ class FriendList(LoginRequiredMixin, View):
         users = CustomUser.objects.filter(Q(first_name__contains=search) | Q(last_name__contains=search)).exclude(pk=request.user.id)
         users_tuple = []
         for user in users:
-            user_friends = get_object_or_404(Friends, current_user=request.user)
-
+            user_friends = Friends.objects.get_or_create(current_user=request.user)
+            user_friends = Friends.objects.get(current_user=request.user)
             if user in list(user_friends.friend_list.all()):
                 users_tuple.append([user, 0])
                 continue
@@ -114,9 +148,9 @@ def remove_friend(request, user_id):
 def my_reservations(request):
     flight_reservations = FlightReservation.objects.filter(Q(user=request.user, creator=True, accepted=False) | Q(user=request.user, creator=False, accepted=True))
     flight_invites = FlightReservation.objects.filter(user=request.user, creator=False, accepted=False)
-
+    room_reservations = HotelReservation.objects.filter(user=request.user)
     vehicle_reservations = VehicleReservation.objects.filter(user=request.user)
-    return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations, 'vehicle_reservations': vehicle_reservations, "flight_invites": flight_invites})
+    return render(request, 'Users/my_reservations.html', {'flight_reservations': flight_reservations, 'vehicle_reservations': vehicle_reservations, "flight_invites": flight_invites, "room_reservations": room_reservations})
 
 
 def cancel_resevation(request, reservation_id):
@@ -137,4 +171,12 @@ def cancel_reservation_vehicle(request, reservation_id):
     vehicle_reservation = get_object_or_404(VehicleReservation, pk=reservation_id)
     vehicle_reservation.user = None
     vehicle_reservation.save()
+    return redirect('my_reservations')
+
+
+def cancel_reservation_room(request, reservation_id):
+    room_reservation = get_object_or_404(HotelReservation, pk=reservation_id)
+    room_reservation.user = None
+    room_reservation.flight_reservation = None
+    room_reservation.save()
     return redirect('my_reservations')

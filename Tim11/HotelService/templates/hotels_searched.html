@@ -1,4 +1,4 @@
-{% extends 'hotels_home.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 
 {% block search_result %}
@@ -23,6 +23,18 @@
                             <div class="col-md-4 border-left card-body">
                                 <ul class="list-unstyled">
                                     <li><h3 class="text-white">Price: {{ room.price }} EUR</h3></li>
+                                    {% if flight_reservation_id %}
+                                        <li>
+                                        <form method="post" action="{% url 'reserve-room' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="flight_reservation_id" value="{{ flight_reservation_id }}">
+                                            <input type="hidden" name="room_id" value="{{ room.pk }}">
+                                            <input type="number" min="1" class="form-control search-slt" name="num_days" placeholder="Number of days">
+                                            <br/>
+                                            <button type="submit" class="btn btn-primary">Reserve</button>
+                                        </form>
+                                        </li>
+                                    {% endif %}
                                 </ul>
 
                             </div>

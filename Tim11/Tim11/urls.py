@@ -31,6 +31,7 @@ urlpatterns = [
     path('rentacar/', include('RentACarService.urls')),
 
     path('register/', user_views.register, name='register'),
+    path('activate/<int:user_id>', user_views.activate, name='activate'),
     path('login/', auth_views.LoginView.as_view(template_name='Users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='airlines_home.html'), name='logout'),
     path('profile/', user_views.profile, name='profile'),
@@ -43,6 +44,7 @@ urlpatterns = [
     path('my_reservations', user_views.my_reservations, name='my_reservations'),
     path('cancel_resevation/<int:reservation_id>', user_views.cancel_resevation, name='cancel_resevation'),
     path('cancel_reservation_vehicle/<int:reservation_id>', user_views.cancel_reservation_vehicle, name='cancel_reservation_vehicle'),
+    path('cancel_reservation_room/<int:reservation_id>', user_views.cancel_reservation_room, name='cancel_reservation_room'),
 
 
 ]

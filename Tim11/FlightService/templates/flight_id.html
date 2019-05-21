@@ -54,12 +54,36 @@
 
             }
             let passport = document.getElementById("passport_number").value;
+            if (passport === "" || selected_seats.length === 0){
+                return;
+            }
             $.ajax({
                 method: "POST",
                 url: "/finish_flight_reservation",
                 data: {"passport": passport, "seats": selected_seats, "invited_friends": invited_friends, "csrfmiddlewaretoken": '{{ csrf_token }}'},
                 success: function(response){
-                    window.location.replace("http://127.0.0.1:8000/my_reservations");
+                    window.location.replace(`http://127.0.0.1:8000/my_reservations`);
+                }
+            })
+        }
+        function continue_reservation(){
+            let invited_friends = [];
+            let invitedFriendsCount = document.getElementById("invite-friends").children.length;
+
+            for (let i=0; i < invitedFriendsCount; i++){
+                invited_friends.push(document.getElementById("invite-friends").children[i].value);
+
+            }
+            let passport = document.getElementById("passport_number").value;
+            if (passport === "" || selected_seats.length === 0){
+                return;
+            }
+            $.ajax({
+                method: "POST",
+                url: "/finish_flight_reservation",
+                data: {"passport": passport, "seats": selected_seats, "invited_friends": invited_friends, "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                success: function(response){
+                    window.location.replace(`http://127.0.0.1:8000/hotels/find_rooms/${response.flight_reservation_id}/${response.passengers}`);
                 }
             })
         }
@@ -281,6 +305,9 @@
                         </div>
                         <div class="row justify-content-center mt-3">
                             <button class="btn btn-primary" onclick="finish_reservation()">Finish Reservation</button>
+                        </div>
+                        <div class="row justify-content-center mt-3">
+                            <button class="btn btn-primary" onclick="continue_reservation()">Continue</button>
                         </div>
                     </div>
 

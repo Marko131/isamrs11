@@ -4,6 +4,8 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
 from FlightService.models import FlightReservation
+from datetime import date, timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Hotel(models.Model):
     name = models.CharField(max_length=100)
@@ -44,8 +46,24 @@ def assign_group(sender, instance, created, **kwargs):
 
 class HotelReservation(models.Model):
     flight_reservation = models.ForeignKey(FlightReservation, on_delete=models.CASCADE, null=True, blank=True)
+    quick = models.BooleanField(default=False)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, null=True, blank=True)
     reserved_from = models.DateField()
     reserved_to = models.DateField()
 
+    @property
+    def is_past(self):
+        return date.today() > self.reserved_to
+
+    def get_rate(self):
+        room_rate = RoomRating.objects.get(user=self.user, room=self.room)
+        if room_rate:
+            return room_rate.rate
+        return 0
+
+
+class RoomRating(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    rate = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)

@@ -56,7 +56,6 @@ class FlightAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(airline=request.user.airlineadministrator.airline)
 
-
     def get_readonly_fields(self, request, obj=None):
         if not request.user.is_superuser:
             return ['airline']
@@ -67,6 +66,12 @@ class FlightAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             obj.airline = request.user.airlineadministrator.airline
         super().save_model(request, obj, form, change)
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super(FlightAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['destination_from'].queryset = Destination.objects.filter(airline=request.user.airlineadministrator.airline)
+        form.base_fields['destination_to'].queryset = Destination.objects.filter(airline=request.user.airlineadministrator.airline)
+        return form
 
 
 class AirlineAdministratorAdmin(admin.ModelAdmin):

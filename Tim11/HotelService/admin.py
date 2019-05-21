@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Hotel, HotelAdministrator, Room, HotelReservation
+from .models import Hotel, HotelAdministrator, Room, HotelReservation, RoomRating
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
 
@@ -51,3 +51,4 @@ admin.site.register(Hotel, HotelAdmin)
 admin.site.register(HotelAdministrator, HotelAdministratorAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(HotelReservation)
+admin.site.register(RoomRating)
