@@ -11,12 +11,34 @@
 			});
 		});
 		function rateFlight(event, flight_id, rate){
-
 		    $.ajax({
                 method: "POST",
                 url: "/rate_flight",
                 dataType: "json",
                 data: {'flight_id': flight_id, 'rate': rate, "csrfmiddlewaretoken": '{{ csrf_token }}' },
+                success: function(response){
+
+                    let index = Array.prototype.indexOf.call(event.target.parentElement.children, event.target) + 1;
+                    for (let i = 0; i < event.target.parentElement.childElementCount; i++){
+                        event.target.parentElement.children[i].classList.remove("text-primary");
+                    }
+                    for (let i = 0; i < index; i++){
+                        event.target.parentElement.children[i].classList.add("text-primary");
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+
+		}
+		function rateRoom(event, room_id, rate){
+
+		    $.ajax({
+                method: "POST",
+                url: "/hotels/rate_room",
+                dataType: "json",
+                data: {'room_id': room_id, 'rate': rate, "csrfmiddlewaretoken": '{{ csrf_token }}' },
                 success: function(response){
 
                     let index = Array.prototype.indexOf.call(event.target.parentElement.children, event.target) + 1;
@@ -61,6 +83,7 @@
         <div class="row">
             <div class="col">
                 {% if flight_invites %}
+                    <h2 class="h2 text-center">Flight Invites</h2>
                     {% for flight_invite in flight_invites %}
                         <div class="row justify-content-center">
                             <div class="col card my-2" style="max-width: 60rem;background-color: rgba(33,37,41,.5);">
@@ -99,8 +122,8 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-                {% if flight_reservations or vehicle_reservations %}
-                    <h2 class="h2 text-center">Reservations</h2>
+                {% if flight_reservations %}
+                    <h2 class="h2 text-center">Flight Reservations</h2>
                     {% for flight_reservation in flight_reservations %}
                         <div class="row justify-content-center">
                             <div class="col card my-2" style="max-width: 40rem;background-color: rgba(33,37,41,.5);">
@@ -156,6 +179,69 @@
                         </div>
                         </div>
                     {% endfor %}
+                {% endif %}
+                {% if room_reservations %}
+                    <h2 class="h2 text-center">Room Reservations</h2>
+                    {% for room_reservation in room_reservations %}
+                        <div class="row justify-content-center">
+                        <div class="col card my-2" style="max-width: 40rem;background-color: rgba(33,37,41,.5);">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-8 d-flex align-items-center text-white">
+                                        Type: {{ room_reservation.room.type }}
+                                        <br/>
+                                        Capacity: {{ room_reservation.room.capacity }}
+                                        <br/>
+                                        Floor: {{ room_reservation.room.floor }}
+                                        <br/>
+                                        From: {{ room_reservation.reserved_from }}, To: {{ room_reservation.reserved_to }}
+                                    </div>
+                                    <div class="col-4 d-flex align-items-center">
+                                        {% if room_reservation.is_past %}
+                                            {% csrf_token %}
+
+                                            {% if room_reservation.get_rate > 0 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 1)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 1)"></i>
+                                            {% endif %}
+
+                                            {% if room_reservation.get_rate > 1 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 2)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 2)"></i>
+                                            {% endif %}
+
+                                            {% if room_reservation.get_rate > 2 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 3)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 3)"></i>
+                                            {% endif %}
+
+                                            {% if room_reservation.get_rate > 3 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 4)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 4)"></i>
+                                            {% endif %}
+
+                                            {% if room_reservation.get_rate > 4 %}
+                                                <i class="fa fa-star text-primary" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 5)"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" aria-hidden="true" onclick="rateRoom(event, {{ room_reservation.room_id }}, 5)"></i>
+                                            {% endif %}
+
+                                        {% else %}
+                                            <a href="{% url 'cancel_reservation_room' room_reservation.pk %}" class="btn btn-danger float-right">Cancel reservation</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% if vehicle_reservations %}
+                    <h2 class="h2 text-center">Vehicle Reservations</h2>
                     {% for vehicle_reservation in vehicle_reservations %}
                         <div class="row justify-content-center">
                         <div class="col card my-2" style="max-width: 40rem;background-color: rgba(33,37,41,.5);">
@@ -209,7 +295,8 @@
                         </div>
                         </div>
                     {% endfor %}
-                {% else %}
+                {% endif %}
+                {% if not vehicle_reservations and not flight_reservations and not room_reservations %}
                     <h2 class="h2 text-center">No reservations</h2>
                 {% endif %}
             </div>
