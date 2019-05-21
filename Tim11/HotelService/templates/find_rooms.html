@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block scripts %}
+    <script>
+    </script>
+{% endblock %}
+
+{% block body %}
+    <section class="search-sec">
+        <div class="container">
+            <form action="{% url 'search_rooms_after_reservation' %}" method="post" novalidate="novalidate">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                                <input type="hidden" name="flight_reservation_id" value="{{ flight_reservation }}">
+                                <input type="search" class="form-control search-slt" placeholder="Type" name="type">
+                            </div>
+
+                            <div style="width: 0; height: 0">
+                                <input width="0" height="0" type="hidden" name="capacity" value="{{ passengers }}">
+                            </div>
+
+                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                                 <input type="number" min="0" class="form-control search-slt" placeholder="Floor" name="floor">
+                            </div>
+
+                            <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                                <button type="submit" class="btn btn-primary wrn-btn">Search rooms</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
+
+{% block search_result %}
+
+    {% for q_reservation in quick_reservations %}
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="card h-100" style="background-color: rgba(33,37,41,.5);" >
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-md-8  card-body">
+                                <div class="m-2 text-white">
+                                    Type: {{ q_reservation.room.type }}
+                                </div>
+                                <div class="m-2 text-white">
+                                    Capacity: {{ q_reservation.room.capacity }}
+                                </div>
+                                <div class="m-2 text-white">
+                                    Floor: {{ q_reservation.room.floor }}
+                                </div>
+                                <div class="m-2 text-white">
+                                    From: {{ q_reservation.reserved_from }} - To: {{ q_reservation.reserved_to }}
+                                </div>
+                            </div>
+                            <div class="col-md-4 border-left card-body">
+                                <ul class="list-unstyled">
+                                    <li><h3 class="text-white">Price: {{ q_reservation.room.price }} EUR</h3></li>
+                                    <li>
+                                        <form method="post" action="{% url 'reserve_quick_room' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="flight_reservation_id" value="{{ flight_reservation}}">
+                                            <input type="hidden" name="room_reservation_id" value="{{ q_reservation.id }}">
+                                            <button type="submit" class="btn btn-primary">Reserve</button>
+                                        </form>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
