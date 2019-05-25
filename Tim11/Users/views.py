@@ -7,7 +7,6 @@ from django.views import View
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
-from django.contrib.auth.forms import PasswordChangeForm
 from FlightService.models import FlightReservation
 from HotelService.models import HotelReservation
 from RentACarService.models import VehicleReservation
@@ -32,6 +31,13 @@ def register(request):
             messages.success(request, 'Activate account before logging in!')
             return redirect('login')
         else:
+            errors = form.errors.as_data()
+            for key in form.errors.as_data():
+                if key == 'email':
+                    msg = 'User with this email already exists'
+                else:
+                    msg = errors[key][0].message
+                messages.error(request, msg)
             return render(request, 'Users/register.html', {'form': form})
     else:
         form = UserRegisterForm()
@@ -69,6 +75,12 @@ def profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, f'Your account has been updated')
+            return redirect('profile')
+        else:
+            errors = form.errors.as_data()
+            for key in form.errors.as_data():
+                msg = errors[key][0].message
+                messages.error(request, msg)
             return redirect('profile')
     else:
         form = ProfileUpdateForm(instance=request.user)
@@ -180,3 +192,21 @@ def cancel_reservation_room(request, reservation_id):
     room_reservation.flight_reservation = None
     room_reservation.save()
     return redirect('my_reservations')
+
+
+def change_password_view(request, user_id):
+    user = get_object_or_404(CustomUser, pk=user_id)
+    return render(request, 'Users/change_password.html', {'user_id': user_id})
+
+
+def change_password(request):
+    user = get_object_or_404(CustomUser, pk=request.POST.get('user_id'))
+    password1 = request.POST.get('password1')
+    password2 = request.POST.get('password2')
+    if password1 != password2:
+        messages.error(request, 'The two password fields didn\'t match.')
+        return change_password_view(request, user_id=user.id)
+    user.set_password(password1)
+    user.is_active = True
+    user.save()
+    return redirect('login')

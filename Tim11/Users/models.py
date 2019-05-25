@@ -1,6 +1,30 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
+from .validators import validate_phone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+import threading
+from django.core.mail import EmailMessage
+from Tim11.settings import EMAIL_HOST_USER
+
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, html_content, recipient_list):
+        self.subject = subject
+        self.recipient_list = recipient_list
+        self.html_content = html_content
+        threading.Thread.__init__(self)
+
+    def run(self):
+        msg = EmailMessage(self.subject, self.html_content, EMAIL_HOST_USER, self.recipient_list)
+        msg.content_subtype = "html"
+        msg.send()
+
+
+def send_html_mail(subject, html_content, recipient_list):
+    EmailThread(subject, html_content, recipient_list).start()
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -30,12 +54,13 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(_('email address'), unique=True)
 
     city = models.CharField(max_length=100, default='', blank=True)
-    phone = models.CharField(max_length=15, default='', blank=True)
+    phone = models.CharField(max_length=15, default='', blank=True, validators=[validate_phone])
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -44,6 +69,14 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+@receiver(post_save, sender=CustomUser)
+def admin_change_password(sender, instance, created, **kwargs):
+    if created:
+        send_html_mail("Account activation",
+                       f"<a href=\"http://127.0.0.1:8000/change_password/{instance.id}\"> Click here to activate your account. </a>",
+                       [instance.email])
+
 
 
 class Request(models.Model):

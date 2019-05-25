@@ -103,6 +103,7 @@ class FlightReservationAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(FlightReservationAdmin, self).get_form(request, obj, **kwargs)
         if request.user.is_superuser:
+            form.base_fields['seat'].queryset = Seat.objects.filter(available=True)
             return form
         form.base_fields['seat'].queryset = Seat.objects.filter(flight__airline=request.user.airlineadministrator.airline, available=True)
         return form

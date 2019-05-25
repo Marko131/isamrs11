@@ -26,25 +26,25 @@
                 {% csrf_token %}
 
                 {% if messages %}
-                        <div class="form-row m-auto">
-                            <div class="col">
-                                {% for message in messages %}
-                                    <div class="alert alert-{{ message.tags }}">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                {% if form.errors %}
-                <div class="form-row m-auto">
-                    <div class="col">
-                        <div class="alert alert-danger text-center">
-                            Invalid username or password
+                    <div class="form-row m-auto">
+                        <div class="col">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
-                </div>
+                {% endif %}
+
+                {% if form.errors %}
+                    <div class="form-row m-auto">
+                        <div class="col">
+                            <div class="alert alert-danger text-center">
+                                Invalid username or password
+                            </div>
+                        </div>
+                    </div>
                 {% endif %}
 
                 <div class="form-row mt-4">

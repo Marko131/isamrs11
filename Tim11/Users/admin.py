@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import CustomUser, Request, Friends
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
+from .views import send_html_mail
 
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
@@ -36,7 +37,10 @@ class CustomUserAdmin(UserAdmin):
     def save_model(self, request, obj, form, change):
         if request.user.is_superuser:
             obj.is_staff = True
+            obj.is_active = False
+            #send_mail
         super().save_model(request, obj, form, change)
+
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
