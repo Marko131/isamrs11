@@ -33,9 +33,15 @@
                         <div class="form-row m-auto">
                             <div class="col">
                                 {% for message in messages %}
-                                    <div class="alert alert-{{ message.tags }}">
-                                        {{ message }}
-                                    </div>
+                                    {% if message.tags == 'error' %}
+                                        <div class="alert alert-danger">
+                                            {{ message }}
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-{{ message.tags }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         </div>
