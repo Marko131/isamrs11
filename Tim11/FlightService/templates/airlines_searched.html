@@ -5,26 +5,32 @@
     {% for flight in flights %}
         <div class="row mb-3">
             <div class="col-md-12">
-                <div class="card h-100" style="background-color: rgba(33,37,41,.5);" >
+                <div class="card h-100" style="background-color: rgba(33,37,41,.5);">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-8  card-body">
-                                <div class="m-2 text-white">
+                                <div class="m-2 text-white h2">
+                                    {{ flight.airline }}
+                                </div>
+                                <div class="m-2 text-white h3">
                                     {{ flight.destination_from }} - {{ flight.destination_to }}
                                 </div>
                                 <div class="m-2 text-white">
-                                    {{ flight.departure_time }}
+                                    Departure time: {{ flight.departure_time }}
                                 </div>
                                 <div class="m-2 text-white">
-                                    {{ flight.arrival_time }}
+                                    Arrival time: {{ flight.arrival_time }}
                                 </div>
                             </div>
+
                             <div class="col-md-4 border-left card-body">
                                 <ul class="list-unstyled">
                                     <li><h3 class="text-white">Price: {{ flight.price }} EUR</h3></li>
                                 </ul>
+                                <div class="my-2 text-white">
+                                    {{ flight.airline }}
+                                </div>
                                 <a href="{% url 'flight_with_id' flight.id %}" class="btn btn-primary">Select</a>
-
                             </div>
                         </div>
                     </div>

@@ -63,6 +63,18 @@ class Flight(models.Model):
     cols_business = models.PositiveIntegerField(default=0)
     rows_first = models.PositiveIntegerField(default=0)
     cols_first = models.PositiveIntegerField(default=0)
+    discount = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(99)])
+
+    @property
+    def price_with_discount(self):
+        return float(self.price * (100 - self.discount)) / 100.00
+
+    @property
+    def get_average_rate(self):
+        ratings = [rating.rate for rating in FlightRating.objects.filter(flight=self)]
+        if ratings:
+            return float(sum(ratings)) / len(ratings)
+        return 0
 
 
 class Seat(models.Model):

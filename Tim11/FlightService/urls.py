@@ -14,4 +14,6 @@ urlpatterns = [
     path('invite/<int:reservation_id>', invite),
     path('cancel_invite/<int:reservation_id>', cancel_invite, name='cancel_invite'),
     path('accept_invite/<int:reservation_id>', accept_invite, name='accept_invite'),
+    path('get_rating_airline', get_rating_airline, name='get_rating_airline')
+
 ]

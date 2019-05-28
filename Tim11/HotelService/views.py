@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Hotel, Room, HotelReservation, RoomRating
 from django.http import HttpResponseForbidden, JsonResponse
 from FlightService.models import FlightReservation
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 
 def hotels(request):
@@ -76,6 +76,76 @@ def reserve_quick_room(request):
     room_reservation.user = request.user
     room_reservation.save()
     return redirect('my_reservations')
+
+
+def hotel_service_reports(request):
+    if not request.user.is_superuser:
+        hotel = request.user.hoteladministrator.hotel
+    else:
+        return JsonResponse({})
+    today = HotelReservation.objects.filter(reserved_from__lt=date.today(), room__hotel=hotel) & HotelReservation.objects.filter(reserved_from__gte=date.today()-timedelta(days=1), room__hotel=hotel)
+    yesterday = HotelReservation.objects.filter(reserved_from__lt=date.today() - timedelta(days=1), room__hotel=hotel) & HotelReservation.objects.filter(reserved_from__gte=date.today()-timedelta(days=2), room__hotel=hotel)
+    twodaysago = HotelReservation.objects.filter(reserved_from__lt=date.today() - timedelta(days=2), room__hotel=hotel) & HotelReservation.objects.filter(reserved_from__gte=date.today()-timedelta(days=3), room__hotel=hotel)
+    threedaysago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(days=3), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gte=date.today() - timedelta(days=4), room__hotel=hotel)
+    fourdaysago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(days=4), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gte=date.today() - timedelta(days=5), room__hotel=hotel)
+    fivedaysago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(days=5), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gte=date.today() - timedelta(days=6), room__hotel=hotel)
+
+    oneweekago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today(), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gte=date.today() - timedelta(weeks=1), room__hotel=hotel)
+    twoweeksago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(weeks=1), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gte=date.today() - timedelta(weeks=2), room__hotel=hotel)
+    threeweeksago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(weeks=2), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gte=date.today() - timedelta(weeks=3), room__hotel=hotel)
+    fourweeksago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(weeks=3), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gte=date.today() - timedelta(weeks=4), room__hotel=hotel)
+
+    onemonthago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today(), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gt=date.today() - timedelta(weeks=4), room__hotel=hotel)
+    twomonthsago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(weeks=4), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gt=date.today() - timedelta(weeks=8), room__hotel=hotel)
+    threemonthsago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(weeks=8), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gt=date.today() - timedelta(weeks=12), room__hotel=hotel)
+    fourmonthsago = HotelReservation.objects.filter(
+        reserved_from__lt=date.today() - timedelta(weeks=12), room__hotel=hotel) & HotelReservation.objects.filter(
+        reserved_from__gt=date.today() - timedelta(weeks=16), room__hotel=hotel)
+
+    days = [
+        'Today',
+        'Yesterday',
+        '2 days ago',
+        '3 days ago',
+        '4 days ago',
+        '5 days ago',
+    ]
+    weeks = [
+        'One week ago',
+        'Two weeks ago',
+        'Three weeks ago',
+        'Four weeks ago',
+    ]
+    months = [
+        'One month ago',
+        'Two months ago',
+        'Three months ago',
+        'Four months ago'
+    ]
+    daysCount = [today.count(), yesterday.count(), twodaysago.count(), threedaysago.count(), fourdaysago.count(),fivedaysago.count()]
+    weeksCount = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
+    monthsCount = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
+    return JsonResponse({'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months, 'monthsCount': monthsCount})
 
 def search_rooms_after_reservation(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')

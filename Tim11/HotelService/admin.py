@@ -47,8 +47,16 @@ class RoomAdmin(admin.ModelAdmin):
         return qs.filter(hotel=request.user.hoteladministrator.hotel)
 
 
+class HotelReservationAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = super(HotelReservationAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(room__hotel=request.user.hoteladministrator.hotel)
+
+
 admin.site.register(Hotel, HotelAdmin)
 admin.site.register(HotelAdministrator, HotelAdministratorAdmin)
 admin.site.register(Room, RoomAdmin)
-admin.site.register(HotelReservation)
+admin.site.register(HotelReservation, HotelReservationAdmin)
 admin.site.register(RoomRating)
