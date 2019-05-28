@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6db82c8a-3a34-4459-aa1f-7ce75cd8e2f0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Tim11.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Tim11.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FlightService/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/FlightService/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tim11/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tim11/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tim11/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tim11/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Users/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/Users/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Users/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/Users/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/Users/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Users/templates/Users/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/Users/templates/Users/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Users/templates/Users/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/Users/templates/Users/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Users/templates/Users/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/Users/templates/Users/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/Users/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-    </list>
+    <list default="true" id="6db82c8a-3a34-4459-aa1f-7ce75cd8e2f0" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,17 +20,7 @@
     <favorites_list name="Tim11" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Users/templates/Users/profile.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -107,7 +82,6 @@
         <option value="$PROJECT_DIR$/RentACarService/admin.py" />
         <option value="$PROJECT_DIR$/static/css/flight_seats.css" />
         <option value="$PROJECT_DIR$/FlightService/urls.py" />
-        <option value="$PROJECT_DIR$/FlightService/models.py" />
         <option value="$PROJECT_DIR$/FlightService/templates/airline_id.html" />
         <option value="$PROJECT_DIR$/FlightService/templates/invite.html" />
         <option value="$PROJECT_DIR$/templates/base.html" />
@@ -123,7 +97,6 @@
         <option value="$PROJECT_DIR$/Users/templates/Users/my_reservations.html" />
         <option value="$PROJECT_DIR$/RentACarService/templates/rentacar_id.html" />
         <option value="$PROJECT_DIR$/FlightService/views.py" />
-        <option value="$PROJECT_DIR$/Tim11/settings.py" />
         <option value="$PROJECT_DIR$/Users/forms.py" />
         <option value="$PROJECT_DIR$/Users/templates/Users/login.html" />
         <option value="$PROJECT_DIR$/Users/templates/Users/register.html" />
@@ -135,6 +108,8 @@
         <option value="$PROJECT_DIR$/Users/views.py" />
         <option value="$PROJECT_DIR$/Users/models.py" />
         <option value="$PROJECT_DIR$/Users/templates/Users/change_password.html" />
+        <option value="$PROJECT_DIR$/Tim11/settings.py" />
+        <option value="$PROJECT_DIR$/FlightService/models.py" />
       </list>
     </option>
   </component>
@@ -158,24 +133,6 @@
             <path>
               <item name="Tim11" type="b2602c69:ProjectViewProjectNode" />
               <item name="Tim11" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Tim11" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Tim11" type="462c0819:PsiDirectoryNode" />
-              <item name="Users" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Tim11" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Tim11" type="462c0819:PsiDirectoryNode" />
-              <item name="Users" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Tim11" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Tim11" type="462c0819:PsiDirectoryNode" />
-              <item name="Users" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="Users" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -339,11 +296,12 @@
       <workItem from="1558380562355" duration="3113000" />
       <workItem from="1558457954040" duration="870000" />
       <workItem from="1558781657291" duration="14080000" />
+      <workItem from="1558817619138" duration="2998000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71341000" />
+    <option name="totallyTimeSpent" value="74339000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -357,7 +315,7 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.33812407" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.34341908" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" weight="0.32995737" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -366,7 +324,7 @@
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32827735" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3268921" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.31400967" />
@@ -658,13 +616,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tim11/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-68">
-          <caret line="92" lean-forward="true" selection-start-line="92" selection-end-line="92" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Users/templates/Users/register.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -689,16 +640,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="610">
           <caret line="106" column="23" lean-forward="true" selection-start-line="106" selection-start-column="23" selection-end-line="106" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/FlightService/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="43" column="54" lean-forward="true" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -752,8 +693,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Users/templates/Users/profile.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        <state relative-caret-position="17">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/FlightService/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="29" column="75" selection-start-line="29" selection-start-column="75" selection-end-line="29" selection-end-column="75" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tim11/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="454">
+          <caret line="144" column="30" selection-start-line="144" selection-start-column="30" selection-end-line="144" selection-end-column="30" />
         </state>
       </provider>
     </entry>
