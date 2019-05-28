@@ -6,6 +6,8 @@ from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+from location_field.models.plain import PlainLocationField
+
 
 class Airline(models.Model):
     name = models.CharField(max_length=100)
@@ -23,10 +25,9 @@ class Destination(models.Model):
     country = models.CharField(max_length=50)
     airport = models.CharField(max_length=150)
     airport_code = models.CharField(max_length=10)
-    lat = models.DecimalField(decimal_places=6, max_digits=15)
-    lon = models.DecimalField(decimal_places=6, max_digits=15)
     image = models.ImageField()
     airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
+    location = PlainLocationField(based_fields=['city'], zoom=7, null=True)
 
     def __str__(self):
         return self.name
