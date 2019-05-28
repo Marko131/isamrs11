@@ -18,7 +18,7 @@ class AircraftModelAdmin(admin.ModelAdmin):
 class AirlineAdmin(admin.ModelAdmin):
     search_fields = ['name']
     exclude = ('rating',)
-    readonly_fields = ('rating', )
+    #readonly_fields = ('rating', )
     inlines = [AirlineAdministratorInline]
 
     def get_queryset(self, request):
@@ -69,6 +69,8 @@ class FlightAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(FlightAdmin, self).get_form(request, obj, **kwargs)
+        if request.user.is_superuser:
+            return form
         form.base_fields['destination_from'].queryset = Destination.objects.filter(airline=request.user.airlineadministrator.airline)
         form.base_fields['destination_to'].queryset = Destination.objects.filter(airline=request.user.airlineadministrator.airline)
         return form

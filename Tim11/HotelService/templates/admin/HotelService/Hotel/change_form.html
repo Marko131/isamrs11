@@ -16,18 +16,6 @@
             </td>
         </tr>
     </table>
-    <h2 style="display: inline;">Average rate:  </h2>
-    <h2 style="display: inline;" id="average_rate"></h2>
-    <script>
-        console.log("asdasda");
-        $.ajax({
-            method: "GET",
-            url: "{% url 'get_rating_airline' %}",
-            success: function (data) {
-                $("#average_rate").text(data.rating);
-            }
-        })
-    </script>
 
 
 
@@ -38,7 +26,7 @@
     <script>
         $.ajax({
             method: "GET",
-            url: "{% url 'flight_service_reports' %}",
+            url: "{% url 'hotel_service_reports' %}",
             success: function(data){
                 var ctx = document.getElementById('myChart').getContext('2d');
                 var ctx2 = document.getElementById('myChart2').getContext('2d');

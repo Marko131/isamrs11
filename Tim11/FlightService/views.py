@@ -24,6 +24,7 @@ def search_flights(request):
         flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to,departure_time__day=date_depart.day, departure_time__month=date_depart.month,departure_time__year=date_depart.year)
     except(ValueError):
         flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to)
+    flights = flights.filter(departure_time__gt=datetime.now())
 
     try:
         date_return = datetime.strptime(request.POST.get('date_return'), '%Y-%m-%d')
@@ -47,7 +48,7 @@ def search_airlines(request):
 
 def airline_detail(request, airline_id):
     airline = get_object_or_404(Airline, pk=airline_id)
-    quick_reservations = FlightReservation.objects.filter(seat__flight__airline=airline, user__isnull=True)
+    quick_reservations = FlightReservation.objects.filter(seat__flight__airline=airline, user__isnull=True, seat__flight__departure_time__gt=datetime.now())
     return render(request, 'airline_id.html', {'airline':airline, 'reservations':quick_reservations})
 
 
@@ -64,44 +65,48 @@ def reserve(request, reservation_id):
 
 
 def flight_service_reports(request):
-    today = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=1))
-    yesterday = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=1)) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=2))
-    twodaysago = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=2)) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=3))
+    if not request.user.is_superuser:
+        airline = request.user.airlineadministrator.airline
+    else:
+        return JsonResponse({})
+    today = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today(), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=1), seat__flight__airline=airline)
+    yesterday = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=1), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=2), seat__flight__airline=airline)
+    twodaysago = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=2), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=3), seat__flight__airline=airline)
     threedaysago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(days=3)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(days=4))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(days=3), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(days=4), seat__flight__airline=airline)
     fourdaysago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(days=4)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(days=5))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(days=4), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(days=5), seat__flight__airline=airline)
     fivedaysago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(days=5)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(days=6))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(days=5), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(days=6), seat__flight__airline=airline)
 
     oneweekago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=1))
+        seat__flight__departure_time__lt=datetime.today(), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=1), seat__flight__airline=airline)
     twoweeksago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=1)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=2))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=1), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=2), seat__flight__airline=airline)
     threeweeksago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=2)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=3))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=2), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=3), seat__flight__airline=airline)
     fourweeksago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=3)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=3), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4), seat__flight__airline=airline)
 
     onemonthago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today()) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4))
+        seat__flight__departure_time__lt=datetime.today(), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4), seat__flight__airline=airline)
     twomonthsago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=4)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=8))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=4), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=8), seat__flight__airline=airline)
     threemonthsago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=8)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=12))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=8), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=12), seat__flight__airline=airline)
     fourmonthsago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=12)) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=16))
+        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=12), seat__flight__airline=airline) & FlightReservation.objects.filter(
+        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=16), seat__flight__airline=airline)
 
     days = [
         'Today',
@@ -213,3 +218,14 @@ def cancel_invite(request, reservation_id):
     flight_reservation = get_object_or_404(FlightReservation, pk=reservation_id)
     flight_reservation.delete()
     return redirect("airlines")
+
+def get_rating_airline(request):
+    if not request.user.is_superuser:
+        rating_qs = FlightRating.objects.filter(flight__airline=request.user.airlineadministrator.airline)
+        rating_list = [r.rate for r in rating_qs]
+        rating = float(sum(rating_list)) / len(rating_list)
+        return JsonResponse({'rating': rating})
+    else:
+        return JsonResponse({'rating': 0})
+
+
