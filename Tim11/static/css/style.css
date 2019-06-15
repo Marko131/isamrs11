@@ -233,3 +233,8 @@ body{
 .owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span {
     background: #007bff;
 }
+
+.exchange:hover{
+    color: #007bff;
+    cursor: pointer;
+}

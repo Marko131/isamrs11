@@ -45,7 +45,7 @@ urlpatterns = [
     path('cancel_resevation/<int:reservation_id>', user_views.cancel_resevation, name='cancel_resevation'),
     path('cancel_reservation_vehicle/<int:reservation_id>', user_views.cancel_reservation_vehicle, name='cancel_reservation_vehicle'),
     path('cancel_reservation_room/<int:reservation_id>', user_views.cancel_reservation_room, name='cancel_reservation_room'),
-    path('change_password/<int:user_id>', user_views.change_password_view),
+    path('change_password/<int:user_id>', user_views.change_password_view, name='update_password'),
     path('change_password', user_views.change_password, name='change_password')
 
 ]

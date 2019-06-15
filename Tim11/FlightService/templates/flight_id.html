@@ -20,7 +20,13 @@
             return this;
         };
         function selectSeat(event){
+            if(event.target.id === "template-selected-inner") return;
+            if(event.target.id === "template-first-inner") return;
+            if(event.target.id === "template-business-inner") return;
+            if(event.target.id === "template-economy-inner") return;
+
             event.target.classList.toggle("selected-innerColor");
+
         }
         function asdf(seat_id, e){
             if (!selected_seats.includes(seat_id)){
@@ -94,10 +100,13 @@
     <div class="container">
 
         <div class="row justify-content-center" >
-            <div class="mt-5 mb-4 p-2 text-white text-center" style="background-color: rgba(33,37,41,.5);">
+            <div class="mt-5 mb-4 p-2 text-white text-center h3" style="background-color: rgba(33,37,41,.5);">
+                <i class="fa fa-location-arrow" aria-hidden="true"></i>
                 {{ flight.destination_from }} - {{ flight.destination_to }}
                 <br/>
                 {{ flight.departure_time }}
+                <br/>
+                {{ flight.airline }}
             </div>
         </div>
         <div id="test" class="row justify-content-center">
@@ -109,9 +118,9 @@
             <div class="col-md-3 align-self-center py-3" id="left" style="background-color: rgba(33,37,41,.5);">
                 <!-- 1 -->
                 <div class="row ">
-                    <div class="col offset-1">
-                        <div class="outer-seat-template">
-                            <div class="inner-seat-first">
+                    <div class="col">
+                        <div class="outer-seat-template" id="template-first-outer">
+                            <div class="inner-seat-first" id="template-first-inner">
                             </div>
                         </div>
                     </div>
@@ -119,10 +128,10 @@
                         First
                     </div>
                 </div>
-                <div class="row ">
-                    <div class="col offset-1">
-                        <div class="outer-seat-template">
-                            <div class="inner-seat-business">
+                <div class="row">
+                    <div class="col">
+                        <div class="outer-seat-template" id="template-business-outer">
+                            <div class="inner-seat-business" id="template-business-inner">
                             </div>
                         </div>
                     </div>
@@ -130,10 +139,10 @@
                         Business
                     </div>
                 </div>
-                <div class="row ">
-                    <div class="col offset-1">
-                        <div class="outer-seat-template">
-                            <div class="inner-seat-economy">
+                <div class="row">
+                    <div class="col">
+                        <div class="outer-seat-template" id="template-economy-outer">
+                            <div class="inner-seat-economy" id="template-economy-inner">
                             </div>
                         </div>
                     </div>
@@ -143,9 +152,9 @@
                 </div>
                 <!-- 2 -->
                 <div class="row">
-                    <div class="col offset-1">
-                        <div class="block-outer-seat">
-                            <div class="block-inner-seat">
+                    <div class="col">
+                        <div class="block-outer-seat" id="template-block-outer">
+                            <div class="block-inner-seat" id="template-block-inner">
                             </div>
                         </div>
                     </div>
@@ -154,9 +163,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col offset-1">
-                        <div class="outer-seat-economy selected-outerColor">
-                            <div class="inner-seat-economy selected-innerColor">
+                    <div class="col">
+                        <div class="outer-seat-economy selected-outerColor" id="template-selected-outer">
+                            <div class="inner-seat-economy selected-innerColor" id="template-selected-inner">
                             </div>
                         </div>
                     </div>
@@ -166,7 +175,7 @@
                 </div>
             </div>
             <!-- Center -->
-            <div class="col-md-6" id="center" style="background-color: rgba(33,37,41,.5);border-left: 1px solid white; border-right: 1px solid white">
+            <div class="col-lg-6" id="center" style="background-color: rgba(33,37,41,.5);border-left: 1px solid white; border-right: 1px solid white;">
                 <div class="row justify-content-center" >
                     <div id="seats" class="p-3">
                         <script>
@@ -290,9 +299,9 @@
                 </div>
             </div>
             <!-- Right -->
-            <div class="col-md-3" id="right" style="background-color: rgba(33,37,41,.5);">
-                <div class="row p-3">
-                    <div class="col text-center text-white">
+            <div class="col-md-3 overflow-auto" id="right" style="background-color: rgba(33,37,41,.5);">
+                <div class="row p-3" >
+                    <div class="col text-center text-white" >
                         <div class="row justify-content-center">
                             <p>Passport number</p>
                             <input id="passport_number" class="form-control mb-3">
@@ -326,6 +335,7 @@
         let c = Math.max({{ flight.cols_business }}, {{ flight.cols_first }}, {{ flight.cols_economy }});
         let seat_wh = w * 0.65 / c;
 
+
         $(".outer-seat-template").width(seat_wh);
         $(".outer-seat-template").height(seat_wh);
 
@@ -356,6 +366,42 @@
         $(".block-inner-seat").height(seat_wh * 0.9);
         $(".block-inner-seat").css("top", seat_wh * 0.05);
         $(".block-inner-seat").css("left", seat_wh * 0.05);
+
+        $(".outer-seat-template").css("max-width", "150px");
+        $(".outer-seat-template").css("max-height", "150px");
+
+        $("#template-block-outer").css("max-width", "150px");
+        $("#template-block-outer").css("max-height", "150px");
+
+        $("#template-selected-outer").css("max-height", "150px");
+        $("#template-selected-outer").css("max-width", "150px");
+
+        $("#template-selected-outer > #template-selected-inner").css("width", "90%");
+        $("#template-selected-outer > #template-selected-inner").css("height", "90%");
+        $("#template-selected-outer > #template-selected-inner").css("top", "5%");
+        $("#template-selected-outer > #template-selected-inner  ").css("left", "5%");
+
+        $("#template-block-outer > #template-block-inner").css("width", "90%");
+        $("#template-block-outer > #template-block-inner").css("height", "90%");
+        $("#template-block-outer > #template-block-inner").css("top", "5%");
+        $("#template-block-outer > #template-block-inner").css("left", "5%");
+
+        $(".outer-seat-template > .inner-seat-first").css("width", "90%");
+        $(".outer-seat-template > .inner-seat-first").css("height", "90%");
+        $(".outer-seat-template > .inner-seat-first").css("top", "5%");
+        $(".outer-seat-template > .inner-seat-first").css("left", "5%");
+
+        $(".outer-seat-template > .inner-seat-business").css("width", "90%");
+        $(".outer-seat-template > .inner-seat-business").css("height", "90%");
+        $(".outer-seat-template > .inner-seat-business").css("top", "5%");
+        $(".outer-seat-template > .inner-seat-business").css("left", "5%");
+
+        $(".outer-seat-template > .inner-seat-economy").css("width", "90%");
+        $(".outer-seat-template > .inner-seat-economy").css("height", "90%");
+        $(".outer-seat-template > .inner-seat-economy").css("top", "5%");
+        $(".outer-seat-template > .inner-seat-economy").css("left", "5%");
+
+
 
     }
     </script>
