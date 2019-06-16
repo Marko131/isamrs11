@@ -1,5 +1,4 @@
 from builtins import set
-
 from django.db import models
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
@@ -9,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime, timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from location_field.models.plain import PlainLocationField
-
+from django.utils import datetime_safe
 
 class Airline(models.Model):
     name = models.CharField(max_length=100)
@@ -55,9 +54,8 @@ class Flight(models.Model):
     destination_to = models.ForeignKey(Destination, on_delete=models.CASCADE, related_name='destination_to')
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
-    #flight_time
     flight_distance = models.PositiveIntegerField()
-    #flight_connnections
+    connections = models.CharField(max_length=500, null=True, blank=True)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     airline = models.ForeignKey(Airline, on_delete=models.CASCADE)
     rows_economy = models.PositiveIntegerField(default=0)
@@ -91,8 +89,12 @@ class Flight(models.Model):
             cl.append("First")
         return cl
 
+    @property
+    def seats_count(self):
+        return self.seat_set.count()
+
     def __str__(self):
-        return f'Flight ID - {self.pk}'
+        return f'{self.pk} - {self.destination_from} - {self.destination_to}'
 
 
 class Seat(models.Model):
@@ -134,6 +136,7 @@ class FlightReservation(models.Model):
     passport = models.CharField(max_length=20, default='', null=True, blank=True)
     quick = models.BooleanField(default=False)
     creator = models.BooleanField(default=True)
+    date_created = models.DateField(null=True)
 
     def __str__(self):
         return str(self.pk) + str(self.seat)
