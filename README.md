@@ -10,3 +10,5 @@ Za pokretanje projekta je potrebno imati instaliran Python3.7 i pip
     <br/>Django version 2.2.1, using settings 'Tim11.settings'
     <br/>Starting development server at http://127.0.0.1:8000/
     <br/>Quit the server with CTRL-BREAK.
+<br/>
+Heroku link: https://isamrs11.herokuapp.com/
