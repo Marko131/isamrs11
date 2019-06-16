@@ -1,15 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Airline, Flight, FlightReservation, FlightRating, Seat
 from datetime import datetime, timedelta
-from django.http import JsonResponse, HttpResponse
-from django.forms.models import model_to_dict
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from Users.models import CustomUser
 import threading
 from django.core.mail import EmailMessage
 from Tim11.settings import EMAIL_HOST_USER
 from django.db import transaction
+from django.core.paginator import Paginator
 
 
 def airlines(request):
@@ -17,21 +16,24 @@ def airlines(request):
 
 
 def search_flights(request):
-    destination_from = request.POST.get('destination_from')
-    destination_to = request.POST.get('destination_to')
+    destination_from = request.GET.get('destination_from')
+    destination_to = request.GET.get('destination_to')
     try:
-        date_depart = datetime.strptime(request.POST.get('date_depart'), '%Y-%m-%d')
+        date_depart = datetime.strptime(request.GET.get('date_depart'), '%Y-%m-%d')
         flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to,departure_time__day=date_depart.day, departure_time__month=date_depart.month,departure_time__year=date_depart.year)
     except(ValueError):
         flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to)
     flights = flights.filter(departure_time__gt=datetime.now())
 
     try:
-        date_return = datetime.strptime(request.POST.get('date_return'), '%Y-%m-%d')
+        date_return = datetime.strptime(request.GET.get('date_return'), '%Y-%m-%d')
         flights_inv = Flight.objects.filter(destination_from__name__contains=destination_to, destination_to__name__contains=destination_from, departure_time__day=date_return.day, departure_time__month=date_return.month, departure_time__year=date_return.year)
     except(ValueError):
         flights_inv = Flight.objects.filter(destination_from__name__contains=destination_to,destination_to__name__contains=destination_from)
 
+    paginator = Paginator(list(flights), 5)
+    page = request.GET.get('page')
+    flights = paginator.get_page(page)
     return render(request, 'airlines_searched.html', {'flights': flights, 'flights_inv:': flights_inv})
 
 
@@ -41,7 +43,7 @@ def flight_detail(request, flight_id):
 
 
 def search_airlines(request):
-    search_input = request.POST.get('airline')
+    search_input = request.GET.get('airline')
     airlines = Airline.objects.filter(name__contains=search_input)
     return render(request, 'airlines_searched.html', {'airlines': airlines})
 
@@ -64,11 +66,12 @@ def reserve(request, reservation_id):
     return render(request, 'airlines_home.html')
 
 
+@login_required
 def flight_service_reports(request):
     if not request.user.is_superuser:
         airline = request.user.airlineadministrator.airline
     else:
-        return JsonResponse({})
+        return HttpResponseForbidden()
     today = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today(), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=1), seat__flight__airline=airline)
     yesterday = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=1), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=2), seat__flight__airline=airline)
     twodaysago = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=2), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=3), seat__flight__airline=airline)
@@ -134,6 +137,7 @@ def flight_service_reports(request):
     return JsonResponse({'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months, 'monthsCount': monthsCount})
 
 
+@login_required
 def rate_flight(request):
     r = request.POST.get('rate')
     flight = Flight.objects.get(pk=request.POST.get('flight_id'))
@@ -144,6 +148,7 @@ def rate_flight(request):
     return JsonResponse({})
 
 
+@login_required
 @transaction.atomic
 def finish_flight_reservation(request):
     seats = request.POST.getlist('seats[]')
@@ -183,6 +188,7 @@ def finish_flight_reservation(request):
     return response
 
 
+@login_required
 def invite(request, reservation_id):
     get_object_or_404(FlightReservation, pk=reservation_id)
     return render(request, "invite.html", {"reservation_id": reservation_id})
@@ -219,6 +225,8 @@ def cancel_invite(request, reservation_id):
     flight_reservation.delete()
     return redirect("airlines")
 
+
+@login_required
 def get_rating_airline(request):
     if not request.user.is_superuser:
         rating_qs = FlightRating.objects.filter(flight__airline=request.user.airlineadministrator.airline)
@@ -226,6 +234,6 @@ def get_rating_airline(request):
         rating = float(sum(rating_list)) / len(rating_list)
         return JsonResponse({'rating': rating})
     else:
-        return JsonResponse({'rating': 0})
+        return HttpResponseBadRequest()
 
 

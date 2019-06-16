@@ -13,6 +13,7 @@
                                     {{ flight.airline }}
                                 </div>
                                 <div class="m-2 text-white h3">
+                                    <i class="fa fa-location-arrow" aria-hidden="true"></i>
                                     {{ flight.destination_from }} - {{ flight.destination_to }}
                                 </div>
                                 <div class="m-2 text-white">
@@ -28,7 +29,12 @@
                                     <li><h3 class="text-white">Price: {{ flight.price }} EUR</h3></li>
                                 </ul>
                                 <div class="my-2 text-white">
-                                    {{ flight.airline }}
+                                    Checked baggage: {{ flight.checked_baggage }} kg.
+                                </div>
+                                <div class="my-2 text-white">
+                                    {% for cl in flight.available_class %}
+                                            <p class="mr-2" style="display: inline">{{ cl }}</p>
+                                    {% endfor %}
                                 </div>
                                 <a href="{% url 'flight_with_id' flight.id %}" class="btn btn-primary">Select</a>
                             </div>
@@ -39,12 +45,36 @@
         </div>
     {% endfor %}
 
+    {% if flights %}
+    <div class="row justify-content-center mb-3" >
+        <span class="py-1 px-2 text-white" style="background-color: rgba(33,37,41,.5);">
+            <div class="current text-center">
+                Page {{ flights.number }} of {{ flights.paginator.num_pages }}
+            </div>
+
+            {% if flights.has_previous %}
+                <a class="text-white" href="{{ request.get_full_path }}&page=1">&laquo; First</a>
+                <a class="text-white" href="{{ request.get_full_path }}&page={{ flights.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            {% if flights.has_next %}
+                <a class="text-white" href="{{ request.get_full_path }}&page={{ flights.next_page_number }}">Next</a>
+                <a class="text-white" href="{{ request.get_full_path }}&page={{ flights.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+
     {% for airline in airlines %}
         <div class="row mb-3 justify-content-center">
             <div class="card h-100 w-75" style="background-color: rgba(33,37,41,.5);">
                 <div class="row">
                     <div class="col-3">
-                        <img src="/{{ airline.image.url }}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                        {% if airline.image %}
+                            <img src="/{{ airline.image.url }}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                        {% else %}
+                            <img src="{% static 'airline_default.jpg' %}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                        {% endif %}
                     </div>
                     <div class="col-9">
                         <div class="mt-2 ml-3 pl-1">

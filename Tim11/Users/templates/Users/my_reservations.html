@@ -129,13 +129,29 @@
                             <div class="col card my-2" style="max-width: 40rem;background-color: rgba(33,37,41,.5);">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-8 d-flex align-items-center text-white">
-                                            {{ flight_reservation.seat.flight.destination_from }} - {{ flight_reservation.seat.flight.destination_to }}
-                                            <br/>
-                                            {{ flight_reservation.seat.flight.departure_time }} - {{ flight_reservation.seat.flight.arrival_time }}
-                                            <br/>
-                                            {{ flight_reservation.seat }}
+                                        <div class="col-8 text-white">
+                                            <div class="row d-flex align-items-center">
+                                                <i class="fa fa-location-arrow mr-1" aria-hidden="true"></i>
+                                                {{ flight_reservation.seat.flight.destination_from }} - {{ flight_reservation.seat.flight.destination_to }}
+                                            </div>
+                                            <div class="row d-flex align-items-center">
+                                                <i class="fa fa-calendar mr-1" aria-hidden="true"></i>
+                                                {{ flight_reservation.seat.flight.departure_time }} - {{ flight_reservation.seat.flight.arrival_time }}
+                                            </div>
+                                            <div class="row d-flex align-items-center">
+                                                <i class="fa fa-square mr-1" aria-hidden="true"></i>{{ flight_reservation.seat.rowcol }}
+                                            </div>
+                                            <div class="row d-flex align-items-center">
+                                                <i class="fa fa-suitcase mr-1" aria-hidden="true"></i>
+                                                {{ flight_reservation.seat.flight.checked_baggage }} kg.
+                                            </div>
+                                            <div class="row d-flex align-items-center">
+                                                <i class="fa fa-plane mr-1" aria-hidden="true"></i>
+                                                {{ flight_reservation.seat.flight.airline }}
+                                            </div>
+
                                         </div>
+
                                         <div class="col-4 d-flex align-items-center">
                                             {% if flight_reservation.is_past %}
                                                 {% csrf_token %}

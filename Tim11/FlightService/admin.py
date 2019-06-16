@@ -2,24 +2,32 @@ from django.contrib import admin
 from .models import Destination, Airline, AirlineAdministrator, Flight, Seat, FlightReservation, FlightRating
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
+from django.db.models import Avg
 
 
 class AirlineAdministratorInline(admin.TabularInline):
     model = AirlineAdministrator
     extra = 0
 
+
 class SeatInline(admin.TabularInline):
     model = Seat
     extra = 0
 
+
 class AircraftModelAdmin(admin.ModelAdmin):
     inlines = [SeatInline]
 
+
 class AirlineAdmin(admin.ModelAdmin):
+    list_display = ['name', 'average_rate']
+    fields = ['name', 'address', 'description', 'image', 'rating']
     search_fields = ['name']
-    exclude = ('rating',)
-    #readonly_fields = ('rating', )
     inlines = [AirlineAdministratorInline]
+
+    def average_rate(self, obj):
+        return FlightRating.objects.filter(flight__airline=obj).aggregate(Avg('rate'))['rate__avg']
+    average_rate.short_description = "Average rate"
 
     def get_queryset(self, request):
         qs = super(AirlineAdmin, self).get_queryset(request)
@@ -27,6 +35,12 @@ class AirlineAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(airlineadministrator__user_profile=request.user)
 
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        print(dir(context['adminform'].form.fields['rating']))
+        avg_rate = FlightRating.objects.filter(flight__airline=obj).aggregate(Avg('rate'))['rate__avg']
+        context['adminform'].form.initial['rating'] = str(avg_rate)
+        context['adminform'].form.fields['rating'].disabled = True
+        return super(AirlineAdmin, self).render_change_form(request, context)
 
 class DestinationAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
@@ -48,7 +62,16 @@ class DestinationAdmin(admin.ModelAdmin):
 
 
 class FlightAdmin(admin.ModelAdmin):
-    list_display = ('id', 'destination_from', 'destination_to', 'departure_time', 'arrival_time')
+    list_display = ('get_name', 'destination_from', 'destination_to', 'departure_time', 'arrival_time', 'average_rate')
+
+    def average_rate(self, obj):
+
+        return FlightRating.objects.filter(flight=obj).aggregate(Avg('rate'))['rate__avg']
+    average_rate.short_description = "Average rate"
+
+    def get_name(self, obj):
+        return f'Flight ID - {obj.pk}'
+    get_name.short_description = 'Flight'
 
     def get_queryset(self, request):
         qs = super(FlightAdmin, self).get_queryset(request)
@@ -77,6 +100,8 @@ class FlightAdmin(admin.ModelAdmin):
 
 
 class AirlineAdministratorAdmin(admin.ModelAdmin):
+    list_display = ['user_profile', 'airline']
+
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super(AirlineAdministratorAdmin, self).get_form(request, obj, **kwargs)
         form.base_fields['user_profile'].queryset = CustomUser.objects.filter(is_staff=True, groups__isnull=True, is_superuser=False)
@@ -84,7 +109,7 @@ class AirlineAdministratorAdmin(admin.ModelAdmin):
 
 
 class SeatAdmin(admin.ModelAdmin):
-    readonly_fields = ['flight', 'row', 'col', 'available']
+    readonly_fields = ['type', 'flight', 'row', 'col', 'available']
 
     def get_queryset(self, request):
         qs = super(SeatAdmin, self).get_queryset(request)

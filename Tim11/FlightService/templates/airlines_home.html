@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block navbar_search %}
-    <form action="{% url 'search_airlines' %}" method="post" class="form-inline my-2 my-lg-0">
+    <form action="{% url 'search_airlines' %}" class="form-inline my-2 my-lg-0">
         {% csrf_token %}
         <div class="form-group">
             <input type="search" name="airline" class="effect-8" placeholder="Search airlines">
@@ -25,19 +25,31 @@
 {% endblock %}
 
 {% block body %}
+    <script>
+    function exchange_values() {
+        let from = $("#destination_from").val();
+        let to = $("#destination_to").val();
+        $("#destination_from").val(to);
+        $("#destination_to").val(from);
+    }
+    </script>
     <section class="search-sec">
         <div class="container">
-            <form action="{% url 'search_flights' %}" method="post" novalidate="novalidate">
+            <form action="{% url 'search_flights' %}" novalidate="novalidate">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="row justify-content-center">
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
-                                <input type="search" class="form-control search-slt" placeholder="From" name="destination_from">
+                                <input type="search" class="form-control search-slt" placeholder="From" name="destination_from" id="destination_from">
+                            </div>
+
+                            <div class="col-lg-1 col-md-1 col-sm-12 p-0 d-flex align-items-center justify-content-center h3 text-white">
+                                <i class="fa fa-exchange pt-2 exchange" onclick="exchange_values()" aria-hidden="true"></i>
                             </div>
 
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
-                                <input type="search" class="form-control search-slt" placeholder="To" name="destination_to">
+                                <input type="search" class="form-control search-slt" placeholder="To" name="destination_to" id="destination_to">
                             </div>
 
                              <div class="col-lg-2 col-md-2 col-sm-12 p-0">
@@ -50,7 +62,55 @@
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
                                 <button type="submit" class="btn btn-primary wrn-btn">Search flights</button>
                             </div>
+
+                            <div class="col-lg-1 col-md-1 col-sm-12 p-0">
+                                <button type="button" class="btn btn-outline-primary wrn-btn text-white" data-toggle="collapse" data-target="#filters">
+                                <i class="fa fa-filter" aria-hidden="true"></i>
+                                Filter
+                            </button>
+                            </div>
                         </div>
+
+                        <div id="filters" class="row collapse inline mt-3">
+                            <div class="row">
+                                <div class="col ml-3 text-white">
+                                    <div class="row d-flex align-items-center">
+                                        <input type="checkbox" class="form-check-inline" name="flight_type[]" value="0">Round-trip
+                                    </div>
+                                    <div class="row d-flex align-items-center">
+                                       <input type="checkbox" class="form-check-inline" name="flight_type[]" value="1">One-way
+                                    </div>
+                                    <div class="row d-flex align-items-center">
+                                        <input type="checkbox" class="form-check-inline" name="flight_type[]" value="2">Multi-city
+                                    </div>
+
+                                    <div class="row d-flex align-items-center">
+                                        <input type="text" name="passengers" placeholder="Number of passengers">
+                                    </div>
+
+                                    <div class="row d-flex align-items-center">
+                                        <input type="checkbox" class="form-check-inline" name="seat_class[]" value="0">Economy
+                                    </div>
+                                    <div class="row d-flex align-items-center">
+                                        <input type="checkbox" class="form-check-inline" name="seat_class[]" value="1">Business
+                                    </div>
+                                    <div class="row d-flex align-items-center">
+                                        <input type="checkbox" class="form-check-inline" name="seat_class[]" value="2">First
+                                    </div>
+
+                                    <div class="row d-flex align-items-center">
+                                        <input type="text" name="checked_baggage" placeholder="Checked baggage">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </form>

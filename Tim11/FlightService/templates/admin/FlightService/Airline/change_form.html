@@ -16,20 +16,6 @@
             </td>
         </tr>
     </table>
-    <h2 style="display: inline;">Average rate:  </h2>
-    <h2 style="display: inline;" id="average_rate"></h2>
-    <script>
-        console.log("asdasda");
-        $.ajax({
-            method: "GET",
-            url: "{% url 'get_rating_airline' %}",
-            success: function (data) {
-                $("#average_rate").text(data.rating);
-            }
-        })
-    </script>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
