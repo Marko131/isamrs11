@@ -24,7 +24,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FlightService/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
+            <state relative-caret-position="1802">
               <caret line="117" column="79" selection-start-line="117" selection-start-column="79" selection-end-line="117" selection-end-column="79" />
               <folding>
                 <element signature="e#0#64#0" expanded="true" />
@@ -140,7 +140,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="8" />
     <option name="y" value="-22" />
     <option name="width" value="1364" />
@@ -206,7 +206,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.script">
+  <component name="RunManager" selected="Django server.Tim11">
     <configuration name="makemigrations" type="PythonConfigurationType" factoryName="Python">
       <module name="Tim11" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -360,11 +360,12 @@
       <workItem from="1560587107815" duration="5713000" />
       <workItem from="1560638852099" duration="3524000" />
       <workItem from="1560674969918" duration="30682000" />
+      <workItem from="1560714397290" duration="902000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="161513000" />
+    <option name="totallyTimeSpent" value="162415000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -376,9 +377,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="754" extended-state="7" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3850227" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.39107412" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" weight="0.32995737" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -798,7 +799,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FlightService/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
+        <state relative-caret-position="1802">
           <caret line="117" column="79" selection-start-line="117" selection-start-column="79" selection-end-line="117" selection-end-column="79" />
           <folding>
             <element signature="e#0#64#0" expanded="true" />
