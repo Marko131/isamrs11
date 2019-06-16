@@ -9,7 +9,7 @@ from django.core.mail import EmailMessage
 from Tim11.settings import EMAIL_HOST_USER
 from django.db import transaction
 from django.core.paginator import Paginator
-
+from django.db.models import Sum
 
 def airlines(request):
     return render(request, 'airlines_home.html')
@@ -18,23 +18,60 @@ def airlines(request):
 def search_flights(request):
     destination_from = request.GET.get('destination_from')
     destination_to = request.GET.get('destination_to')
+    multi_city = request.GET.get('multi_city')
     try:
         date_depart = datetime.strptime(request.GET.get('date_depart'), '%Y-%m-%d')
-        flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to,departure_time__day=date_depart.day, departure_time__month=date_depart.month,departure_time__year=date_depart.year)
-    except(ValueError):
-        flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to)
-    flights = flights.filter(departure_time__gt=datetime.now())
+        if multi_city is not None:
+            flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to,departure_time__day=date_depart.day, departure_time__month=date_depart.month,departure_time__year=date_depart.year, departure_time__gt=datetime.now())
+        else:
+            flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to,departure_time__day=date_depart.day, departure_time__month=date_depart.month,departure_time__year=date_depart.year, connections__isnull=True, departure_time__gt=datetime.now())
+    except ValueError:
+        if multi_city is not None:
+            flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to, departure_time__gt=datetime.now())
+        else:
+            flights = Flight.objects.filter(destination_from__name__contains=destination_from,destination_to__name__contains=destination_to, connections__isnull=True, departure_time__gt=datetime.now())
+
 
     try:
         date_return = datetime.strptime(request.GET.get('date_return'), '%Y-%m-%d')
-        flights_inv = Flight.objects.filter(destination_from__name__contains=destination_to, destination_to__name__contains=destination_from, departure_time__day=date_return.day, departure_time__month=date_return.month, departure_time__year=date_return.year)
-    except(ValueError):
-        flights_inv = Flight.objects.filter(destination_from__name__contains=destination_to,destination_to__name__contains=destination_from)
+        if multi_city is not None:
+            flights_inv = Flight.objects.filter(destination_from__name__contains=destination_to, destination_to__name__contains=destination_from, departure_time__day=date_return.day, departure_time__month=date_return.month, departure_time__year=date_return.year, departure_time__gt=datetime.now())
+        else:
+            flights_inv = Flight.objects.filter(destination_from__name__contains=destination_to, destination_to__name__contains=destination_from, departure_time__day=date_return.day, departure_time__month=date_return.month, departure_time__year=date_return.year, connections__isnull=True, departure_time__gt=datetime.now())
+        flights = flights | flights_inv
+    except ValueError:
+        pass
+
+    economy = request.GET.get('economy')
+    business = request.GET.get('business')
+    first = request.GET.get('first')
+    checked_baggage = request.GET.get('checked_baggage')
+    passengers = request.GET.get('passengers')
+
+
+    if checked_baggage:
+        flights = flights.filter(checked_baggage__gte=checked_baggage)
+
+    if economy is not None:
+        flights = flights.filter(rows_economy__gt=0, cols_economy__gt=0)
+
+    if business is not None:
+        flights = flights.filter(rows_business__gt=0, cols_business__gt=0)
+
+    if first is not None:
+        flights = flights.filter(rows_first__gt=0, cols_first__gt=0)
+
+    try:
+        flights = [x for x in flights if x.seats_count > int(passengers)]
+    except TypeError:
+        pass
+    except ValueError:
+        pass
 
     paginator = Paginator(list(flights), 5)
     page = request.GET.get('page')
     flights = paginator.get_page(page)
-    return render(request, 'airlines_searched.html', {'flights': flights, 'flights_inv:': flights_inv})
+    return render(request, 'airlines_searched.html', {'flights': flights})
 
 
 def flight_detail(request, flight_id):
@@ -51,7 +88,7 @@ def search_airlines(request):
 def airline_detail(request, airline_id):
     airline = get_object_or_404(Airline, pk=airline_id)
     quick_reservations = FlightReservation.objects.filter(seat__flight__airline=airline, user__isnull=True, seat__flight__departure_time__gt=datetime.now())
-    return render(request, 'airline_id.html', {'airline':airline, 'reservations':quick_reservations})
+    return render(request, 'airline_id.html', {'airline':airline, 'reservations': quick_reservations})
 
 
 @login_required
@@ -62,79 +99,27 @@ def reserve(request, reservation_id):
     reservation.passport = passport
     reservation.accepted = False
     reservation.creator = True
+    reservation.date_created = datetime.today()
     reservation.save()
     return render(request, 'airlines_home.html')
 
 
-@login_required
 def flight_service_reports(request):
-    if not request.user.is_superuser:
-        airline = request.user.airlineadministrator.airline
-    else:
-        return HttpResponseForbidden()
-    today = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today(), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=1), seat__flight__airline=airline)
-    yesterday = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=1), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=2), seat__flight__airline=airline)
-    twodaysago = FlightReservation.objects.filter(seat__flight__departure_time__lt=datetime.today() - timedelta(days=2), seat__flight__airline=airline) & FlightReservation.objects.filter(seat__flight__departure_time__gt=datetime.today()-timedelta(days=3), seat__flight__airline=airline)
-    threedaysago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(days=3), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(days=4), seat__flight__airline=airline)
-    fourdaysago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(days=4), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(days=5), seat__flight__airline=airline)
-    fivedaysago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(days=5), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(days=6), seat__flight__airline=airline)
+    date_from_day = int(request.GET.get('date_from_day'))
+    date_from_month = int(request.GET.get('date_from_month'))
+    date_from_year = int(request.GET.get('date_from_year'))
 
-    oneweekago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today(), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=1), seat__flight__airline=airline)
-    twoweeksago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=1), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=2), seat__flight__airline=airline)
-    threeweeksago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=2), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=3), seat__flight__airline=airline)
-    fourweeksago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=3), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4), seat__flight__airline=airline)
+    date_to_day = int(request.GET.get('date_to_day'))
+    date_to_month = int(request.GET.get('date_to_month'))
+    date_to_year = int(request.GET.get('date_to_year'))
 
-    onemonthago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today(), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=4), seat__flight__airline=airline)
-    twomonthsago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=4), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=8), seat__flight__airline=airline)
-    threemonthsago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=8), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=12), seat__flight__airline=airline)
-    fourmonthsago = FlightReservation.objects.filter(
-        seat__flight__departure_time__lt=datetime.today() - timedelta(weeks=12), seat__flight__airline=airline) & FlightReservation.objects.filter(
-        seat__flight__departure_time__gt=datetime.today() - timedelta(weeks=16), seat__flight__airline=airline)
+    airline_id = request.GET.get('airline_id')
+    date_from = datetime(day=date_from_day, month=date_from_month, year=date_from_year)
+    date_to = datetime(day=date_to_day, month=date_to_month, year=date_to_year)
 
-    days = [
-        'Today',
-        'Yesterday',
-        '2 days ago',
-        '3 days ago',
-        '4 days ago',
-        '5 days ago',
-    ]
-    weeks = [
-        'One week ago',
-        'Two weeks ago',
-        'Three weeks ago',
-        'Four weeks ago',
-    ]
-    months = [
-        'One month ago',
-        'Two months ago',
-        'Three months ago',
-        'Four months ago'
-    ]
-    daysCount = [today.count(), yesterday.count(), twodaysago.count(), threedaysago.count(), fourdaysago.count(),fivedaysago.count()]
-    weeksCount = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
-    monthsCount = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
-    return JsonResponse({'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months, 'monthsCount': monthsCount})
+    qs = FlightReservation.objects.filter(seat__flight__airline_id=airline_id, date_created__gte=date_from, date_created__lte=date_to).aggregate(Sum('seat__flight__price'))
+    #FlightRating.objects.filter(flight__airline=obj).aggregate(Avg('rate'))['rate__avg']
+    return JsonResponse({'result': qs.get('seat__flight__price__sum')})
 
 
 @login_required

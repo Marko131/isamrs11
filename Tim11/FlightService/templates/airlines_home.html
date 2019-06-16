@@ -26,11 +26,15 @@
 
 {% block body %}
     <script>
+    
     function exchange_values() {
         let from = $("#destination_from").val();
         let to = $("#destination_to").val();
         $("#destination_from").val(to);
         $("#destination_to").val(from);
+    }
+    function show_filters() {
+        $("#filters").toggle();
     }
     </script>
     <section class="search-sec">
@@ -62,53 +66,52 @@
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
                                 <button type="submit" class="btn btn-primary wrn-btn">Search flights</button>
                             </div>
-
                             <div class="col-lg-1 col-md-1 col-sm-12 p-0">
-                                <button type="button" class="btn btn-outline-primary wrn-btn text-white" data-toggle="collapse" data-target="#filters">
+                                <button type="button" class="btn btn-outline-primary wrn-btn text-white" onclick="show_filters()">
                                 <i class="fa fa-filter" aria-hidden="true"></i>
-                                Filter
-                            </button>
+                                    Filter
+                                </button>
                             </div>
+
                         </div>
 
-                        <div id="filters" class="row collapse inline mt-3">
-                            <div class="row">
-                                <div class="col ml-3 text-white">
-                                    <div class="row d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-inline" name="flight_type[]" value="0">Round-trip
-                                    </div>
-                                    <div class="row d-flex align-items-center">
-                                       <input type="checkbox" class="form-check-inline" name="flight_type[]" value="1">One-way
-                                    </div>
-                                    <div class="row d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-inline" name="flight_type[]" value="2">Multi-city
-                                    </div>
-
-                                    <div class="row d-flex align-items-center">
-                                        <input type="text" name="passengers" placeholder="Number of passengers">
-                                    </div>
-
-                                    <div class="row d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-inline" name="seat_class[]" value="0">Economy
-                                    </div>
-                                    <div class="row d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-inline" name="seat_class[]" value="1">Business
-                                    </div>
-                                    <div class="row d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-inline" name="seat_class[]" value="2">First
-                                    </div>
-
-                                    <div class="row d-flex align-items-center">
-                                        <input type="text" name="checked_baggage" placeholder="Checked baggage">
-                                    </div>
+                        <div id="filters" class="row mt-3" style="display: none;">
+                            <div class="col-md-2 offset-1 text-white ">
+                                <div class="row d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-inline" name="multi_city" checked value="2">Multi-city
                                 </div>
-
-                                <div class="col">
-
-                                </div>
-
                             </div>
 
+                            <div class="col-md-2 offset-1 text-white ">
+                                <div class="row d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-inline" name="economy" value="0">Economy
+                                </div>
+                                <div class="row d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-inline" name="business" value="1">Business
+                                </div>
+                                <div class="row d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-inline" name="first" value="2">First
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 offset-1 text-white ">
+                                <div class="row mb-1 d-flex align-items-center">
+                                    <input type="text" name="passengers" placeholder="Number of passengers">
+                                </div>
+                                <div class="row mt-1 d-flex align-items-center">
+                                    <input type="text" name="checked_baggage" placeholder="Checked baggage">
+                                </div>
+                            </div>
+                            <!--
+                            <div class="col-md-2 offset-1 text-white ">
+                                <div class="row mb-1 d-flex align-items-center">
+                                    <select name="order_by">
+                                        <option></option>
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+                            -->
                         </div>
 
                     </div>

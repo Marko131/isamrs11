@@ -35,9 +35,27 @@ for i in range(50):
     if i % 4 == 0:
         day += 1
     destination_from = random.choice(destination_list)
-    temp = destination_list
-    temp.remove(destination_from)
-    destination_to = random.choice(temp)
+    destination_to = random.choice(destination_list)
+    if destination_from.name == destination_to.name:
+        continue
     d_time = datetime.now() + timedelta(days=day)
     a_time = datetime.now() + timedelta(days=day) + timedelta(hours=5)
-    f, created = Flight.objects.get_or_create(destination_from=destination_from, destination_to=destination_to, departure_time=d_time, arrival_time=a_time, flight_distance=300, price=500, airline=random.choice(airline_list), rows_economy=3, cols_economy=3, rows_business=3, cols_business=3, rows_first=3, cols_first=3, discount=20)
+
+    rf = random.randint(0,5)
+    cf = random.randint(0, 5)
+    if rf == 0 or cf == 0:
+        rf = cf = 0
+
+    rb = random.randint(0, 5)
+    cb = random.randint(0, 5)
+    if rb == 0 or cb == 0:
+        rb = cb = 0
+
+    re = random.randint(0, 5)
+    ce = random.randint(0, 5)
+    if re == 0 or ce == 0:
+        re = ce = 0
+
+    d = random.randint(5, 30)
+    b = random.randint(10, 30)
+    f, created = Flight.objects.get_or_create(destination_from=destination_from, destination_to=destination_to, departure_time=d_time, arrival_time=a_time, flight_distance=300, price=500, airline=random.choice(airline_list), rows_economy=re, cols_economy=ce, rows_business=rb, cols_business=cb, rows_first=rf, cols_first=cf, discount=d, checked_baggage=b)

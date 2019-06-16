@@ -1,143 +1,196 @@
 {% extends "admin/change_form.html" %}
-{% load staticfiles %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'admin/js/calendar.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+        function calculate() {
+            let date_from_day = $("#id_date_from_day").val();
+            let date_from_month = $("#id_date_from_month").val();
+            let date_from_year = $("#id_date_from_year").val();
+
+            let date_to_day = $("#id_date_to_day").val();
+            let date_to_month = $("#id_date_to_month").val();
+            let date_to_year = $("#id_date_to_year").val();
+
+            $.ajax({
+                method: "GET",
+                url: '{% url 'flight_service_reports' %}',
+                data: {"date_from_day": date_from_day, "date_from_month": date_from_month, "date_from_year": date_from_year,
+                        "date_to_day": date_to_day, "date_to_month": date_to_month, "date_to_year": date_to_year,
+                        "airline_id": {{ airline_id }} },
+                success: function (data) {
+                    $("#id_result").text(data.result);
+                },
+                error: function () {
+                    $("#id_result").text("Error");
+                }
+
+            })
+        }
+    </script>
+{% endblock %}
 
 {% block after_related_objects %}
     <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-    <table style="margin-bottom: 20px">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+
+
+
+    <table>
+        <tr style="border: none">
+            <td>Date from</td>
+            <td>{{ calculate_form.date_from }}</td>
+        </tr>
+        <tr style="border: none;">
+            <td>Date to</td>
+            <td>{{ calculate_form.date_to }}</td>
+        </tr>
         <tr>
             <td>
-                <canvas id="myChart" width="400" height="400" style="display: inline"></canvas>
+                <button onclick="calculate()" type="button" >Calculate</button>
             </td>
-            <td>
-                <canvas id="myChart2" width="400" height="400" style="display: inline"></canvas>
-            </td>
-            <td>
-                <canvas id="myChart3" width="400" height="400" style="display: inline"></canvas>
+            <td id="id_result">
+                Result
             </td>
         </tr>
     </table>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+
+    <div style="background-color: white">
+        <h3 style="text-align: center; margin-bottom: 20px;padding-top: 10px; font-size: 1.5em" > Airline reports </h3>
+        <div>
+            <canvas id="myChart" height="100"></canvas>
+        </div>
+
+        <div>
+            <canvas id="myChart2" height="100"></canvas>
+        </div>
+
+        <div>
+            <canvas id="myChart3" height="100"></canvas>
+        </div>
+    </div>
 
     <script>
-        $.ajax({
-            method: "GET",
-            url: "{% url 'flight_service_reports' %}",
-            success: function(data){
-                var ctx = document.getElementById('myChart').getContext('2d');
-                var ctx2 = document.getElementById('myChart2').getContext('2d');
-                var ctx3 = document.getElementById('myChart3').getContext('2d');
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.days,
-                        datasets: [{
-                            label: '# of Reservations',
-                            data: data.daysCount,
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                        }
-                    }
-                });
-                var myChart = new Chart(ctx2, {
-                    type: 'bar',
-                    data: {
-                        labels: data.weeks,
-                        datasets: [{
-                            label: '# of Reservations',
-                            data: data.weeksCount,
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                        }
-                    }
-                });
-                var myChart = new Chart(ctx3, {
-                    type: 'bar',
-                    data: {
-                        labels: data.months,
-                        datasets: [{
-                            label: '# of Reservations',
-                            data: data.monthsCount,
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                        }
-                    }
-                });
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var ctx2 = document.getElementById('myChart2').getContext('2d');
+        var ctx3 = document.getElementById('myChart3').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Today", "Yesterday", "2 days ago", "3 days ago", "4 days ago", "5 days ago"],
+                datasets: [{
+                    label: '# of Reservations',
+                    data: [{{ today }}, {{ yesterday }}, {{ twodaysago }}, {{ threedaysago }}, {{ fourdaysago }}, {{ fivedaysago }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
             },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+        var myChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ["One week ago", "Two weeks ago", "Three weeks ago", "Four weeks ago"],
+                datasets: [{
+                    label: '# of Reservations',
+                    data: [{{ oneweekago }}, {{ twoweeksago }}, {{ threeweeksago }}, {{ fourweeksago }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+        var myChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: ["One month ago", "Two months ago", "Three months ago", "Four months ago"],
+                datasets: [{
+                    label: '# of Reservations',
+                    data: [{{ onemonthago }}, {{ twomonthsago }}, {{ threemonthsago }}, {{ fourmonthsago }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
         });
     </script>
 {% endblock %}

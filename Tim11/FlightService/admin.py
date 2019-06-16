@@ -3,7 +3,8 @@ from .models import Destination, Airline, AirlineAdministrator, Flight, Seat, Fl
 from Users.models import CustomUser
 from django.contrib.auth.models import Group
 from django.db.models import Avg
-
+from datetime import datetime, timedelta
+from .forms import FlightAdminForm, CalculateForm
 
 class AirlineAdministratorInline(admin.TabularInline):
     model = AirlineAdministrator
@@ -36,11 +37,93 @@ class AirlineAdmin(admin.ModelAdmin):
         return qs.filter(airlineadministrator__user_profile=request.user)
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        print(dir(context['adminform'].form.fields['rating']))
         avg_rate = FlightRating.objects.filter(flight__airline=obj).aggregate(Avg('rate'))['rate__avg']
         context['adminform'].form.initial['rating'] = str(avg_rate)
         context['adminform'].form.fields['rating'].disabled = True
         return super(AirlineAdmin, self).render_change_form(request, context)
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        calculate_form = CalculateForm()
+        extra_context['calculate_form'] = calculate_form
+        extra_context['airline_id'] = object_id
+
+        today = FlightReservation.objects.filter(date_created=datetime.today(), seat__flight__airline_id=object_id) & FlightReservation.objects.filter(date_created__gt=datetime.today()-timedelta(days=1), seat__flight__airline_id=object_id)
+        extra_context['today'] = today.count()
+
+        yesterday = FlightReservation.objects.filter(date_created__lte=datetime.today() - timedelta(days=1), seat__flight__airline_id=object_id) & FlightReservation.objects.filter(date_created__gt=datetime.today()-timedelta(days=2), seat__flight__airline_id=object_id)
+        extra_context['yesterday'] = yesterday.count()
+
+        twodaysago = FlightReservation.objects.filter(date_created__lte=datetime.today() - timedelta(days=2), seat__flight__airline_id=object_id) & FlightReservation.objects.filter(date_created__gt=datetime.today()-timedelta(days=3), seat__flight__airline_id=object_id)
+        extra_context['twodaysago'] = twodaysago.count()
+
+        threedaysago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(days=3),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(days=4), seat__flight__airline_id=object_id)
+        extra_context['threedaysago'] = threedaysago.count()
+
+        fourdaysago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(days=4),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(days=5), seat__flight__airline_id=object_id)
+        extra_context['fourdaysago'] = fourdaysago.count()
+
+        fivedaysago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(days=5),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(days=6), seat__flight__airline_id=object_id)
+        extra_context['fivedaysago'] = fivedaysago.count()
+
+        oneweekago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today(),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=1), seat__flight__airline_id=object_id)
+        extra_context['oneweekago'] = oneweekago.count()
+
+        twoweeksago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(weeks=1),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=2), seat__flight__airline_id=object_id)
+        extra_context['twoweeksago'] = twoweeksago.count()
+
+        threeweeksago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(weeks=2),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=3), seat__flight__airline_id=object_id)
+        extra_context['threeweeksago'] = threeweeksago.count()
+
+        fourweeksago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(weeks=3),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=4), seat__flight__airline_id=object_id)
+        extra_context['fourweeksago'] = fourweeksago.count()
+
+        onemonthago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today(),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=4), seat__flight__airline_id=object_id)
+        extra_context['onemonthago'] = onemonthago.count()
+
+        twomonthsago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(weeks=4),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=8), seat__flight__airline_id=object_id)
+        extra_context['twomonthsago'] = twomonthsago.count()
+
+        threemonthsago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(weeks=8),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=12), seat__flight__airline_id=object_id)
+        extra_context['threemonthsago'] = threemonthsago.count()
+
+        fourmonthsago = FlightReservation.objects.filter(
+            date_created__lte=datetime.today() - timedelta(weeks=12),
+            seat__flight__airline_id=object_id) & FlightReservation.objects.filter(
+            date_created__gt=datetime.today() - timedelta(weeks=16), seat__flight__airline_id=object_id)
+        extra_context['fourmonthsago'] = fourmonthsago.count()
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
+
 
 class DestinationAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
@@ -62,6 +145,7 @@ class DestinationAdmin(admin.ModelAdmin):
 
 
 class FlightAdmin(admin.ModelAdmin):
+    form = FlightAdminForm
     list_display = ('get_name', 'destination_from', 'destination_to', 'departure_time', 'arrival_time', 'average_rate')
 
     def average_rate(self, obj):
@@ -109,7 +193,13 @@ class AirlineAdministratorAdmin(admin.ModelAdmin):
 
 
 class SeatAdmin(admin.ModelAdmin):
+    list_display = ['link', 'type', 'row', 'col', 'flight', 'available']
     readonly_fields = ['type', 'flight', 'row', 'col', 'available']
+    list_filter = ['flight']
+
+
+    def link(self, obj):
+        return 'Select seat'
 
     def get_queryset(self, request):
         qs = super(SeatAdmin, self).get_queryset(request)
@@ -138,9 +228,6 @@ class FlightReservationAdmin(admin.ModelAdmin):
     def delete_queryset(self, request, queryset):
         for obj in queryset:
             obj.delete()
-
-
-
 
 admin.site.register(AirlineAdministrator, AirlineAdministratorAdmin)
 admin.site.register(Destination, DestinationAdmin)
