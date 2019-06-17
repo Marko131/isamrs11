@@ -96,13 +96,13 @@ def rentacar_service_reports(request):
         'Three months ago',
         'Four months ago'
     ]
-    daysCount = [today.count(), yesterday.count(), twodaysago.count(), threedaysago.count(), fourdaysago.count(),
+    days_count = [today.count(), yesterday.count(), twodaysago.count(), threedaysago.count(), fourdaysago.count(),
                  fivedaysago.count()]
-    weeksCount = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
-    monthsCount = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
+    weeks_count = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
+    months_count = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
     return JsonResponse(
-        {'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months,
-         'monthsCount': monthsCount})
+        {'daysCount': days_count, 'days': days, 'weeks': weeks, 'weeksCount': weeks_count, 'months': months,
+         'monthsCount': months_count})
 
 
 def rate_vehicle(request):

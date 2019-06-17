@@ -43,26 +43,48 @@
             inviteFriendInputs();
         }
         function inviteFriendInputs(){
-
+            $("#invite-friends").html("");
+            let friends_list = [
+                {% for f in friends %}
+                    "{{ f }}",
+                {% endfor %}
+            ];
+            console.log(friends_list);
             let invite_friends_html = "";
             for (let i = 1; i < selected_seats.length; i++){
                 invite_friends_html += "Friend " + i.toString();
-                invite_friends_html += "<input type=\"email\" class=\"form-control mt-2\" required=\"required\">";
+                let input = $("<input type=\"email\" class=\"form-control mt-2 autocomplete\" required=\"required\" placeholder=\"E-mail\">");
+                $("#invite-friends").append(input);
             }
-            $("#invite-friends").html(invite_friends_html);
+            $(".autocomplete").autocomplete({
+                source: friends_list
+            });
+
         }
         function finish_reservation(){
             let invited_friends = [];
             let invitedFriendsCount = document.getElementById("invite-friends").children.length;
 
             for (let i=0; i < invitedFriendsCount; i++){
-                invited_friends.push(document.getElementById("invite-friends").children[i].value);
-
+                let value = document.getElementById("invite-friends").children[i].value;
+                if (value === "") {
+                    alert("Empty values!");
+                    return;
+                }
+                invited_friends.push(value);
             }
+
             let passport = document.getElementById("passport_number").value;
-            if (passport === "" || selected_seats.length === 0){
+            if (passport === ""){
+                alert("Passport number empty!");
                 return;
             }
+            if (selected_seats.length === 0){
+                alert("No selected seats!");
+                return;
+            }
+            console.log(invited_friends);
+            console.log(selected_seats);
             $.ajax({
                 method: "POST",
                 url: "/finish_flight_reservation",

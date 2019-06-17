@@ -1,0 +1,82 @@
+.outer-seat-economy{
+    border-radius: 9px;
+    border: 3px solid #cd7f32 ;
+	background: white;
+    position: relative;
+    margin: 4px;
+}
+.outer-seat-business{
+    border-radius: 9px;
+    border: 3px solid #D8D8D8 ;
+	background: white;
+    position: relative;
+    margin: 4px;
+}
+.outer-seat-first{
+    border-radius: 9px;
+    border: 3px solid gold ;
+	background: white;
+    position: relative;
+    margin: 4px;
+}
+.inner-seat-economy{
+    border-radius: 4px;
+	background: #cd7f32 ;
+    position: absolute;
+}
+.inner-seat-business{
+    border-radius: 4px;
+	background: #D8D8D8 ;
+    position: absolute;
+}
+.inner-seat-first{
+    border-radius: 4px;
+	background: gold ;
+    position: absolute;
+}
+.block-outer-seat{
+    border-radius: 9px;
+    border: 3px solid #ff0000 ;
+	background: white;
+    position: relative;
+    margin: 4px;
+}
+.block-inner-seat{
+    border-radius: 4px;
+	background: #ff0000 ;
+    position: absolute;
+}
+.block-outer-seat:hover {
+    cursor: not-allowed;
+}
+.block-inner-seat:hover{
+    cursor: not-allowed;
+}
+
+.div-inline{float: left; }
+
+.outer-seat-first:hover, .outer-seat-business:hover, .outer-seat-economy:hover{
+   border-color: #3366CC;
+}
+
+.div-inline:hover .inner-seat-business, .div-inline:hover .inner-seat-economy, .div-inline:hover .inner-seat-first{
+   background: #3366CC;
+}
+
+.clearBoth { clear:both; }
+
+.selected-innerColor {
+  background-color: #3366CC;
+}
+
+.selected-outerColor {
+  border-color: #3366CC;
+}
+
+.outer-seat-template{
+    border-radius: 9px;
+    border: 3px solid #D8D8D8 ;
+	background: white;
+    position: relative;
+    margin: 4px;
+}

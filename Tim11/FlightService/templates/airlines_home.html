@@ -119,6 +119,35 @@
             </form>
         </div>
     </section>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            {% for airline in airlines %}
+                <div class="col-md-3 mx-4 bg-white" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);">
+                    <div class="card-content" >
+                        <div class="card-img d-flex justify-content-center">
+                            {% if airline.image %}
+                                <img src="https://placeimg.com/380/230/nature" alt="">
+                            {% else %}
+                                <img src="{% static 'airline_default.jpg' %}">
+                            {% endif %}
+                            <span style="position: absolute; left: 10px;top:10px;"><h6>Rating {{ airline.rating }}</h6></span>
+                        </div>
+                        <div class="card-desc">
+                            <h3>
+                                <a class="text-dark" href="{% url 'airline_with_id' airline.pk %}">{{ airline.name }}</a>
+                            </h3>
+                            <p>
+                                {{ airline.description }}
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block search_result %}

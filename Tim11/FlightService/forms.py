@@ -19,9 +19,8 @@ class FlightAdminForm(forms.ModelForm):
         depature_time = cleaned_data.get('departure_time')
         arrival_time = cleaned_data.get('arrival_time')
 
-        if depature_time is not None and arrival_time is not None:
-            if depature_time > arrival_time:
-                raise forms.ValidationError("Invalid departure or arrival time")
+        if depature_time is not None and arrival_time is not None and depature_time > arrival_time:
+            raise forms.ValidationError("Invalid departure or arrival time")
 
         if destination_from == destination_to:
             raise forms.ValidationError("Destinations must be different")

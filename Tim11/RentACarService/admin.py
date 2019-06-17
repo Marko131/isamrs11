@@ -12,7 +12,6 @@ class RentACarAdministratorInline(admin.StackedInline):
 class RentACarAdmin(admin.ModelAdmin):
     search_fields = ['name', 'address']
     exclude = ('rating',)
-    #readonly_fields = ('rating',)
     inlines = [RentACarAdministratorInline]
 
     def get_queryset(self, request):

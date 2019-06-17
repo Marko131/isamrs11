@@ -11,7 +11,6 @@ class HotelAdministratorInline(admin.StackedInline):
 class HotelAdmin(admin.ModelAdmin):
     search_fields = ['name', 'address']
     exclude = ('rating',)
-    #readonly_fields = ('rating',)
     inlines = [HotelAdministratorInline]
 
     def get_queryset(self, request):

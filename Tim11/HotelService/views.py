@@ -63,7 +63,7 @@ def reserve_room(request):
             continue
         else:
             return JsonResponse({'greska': 'postoji vec rezervacija'})
-    hotel_reservation = HotelReservation.objects.create(flight_reservation=flight_reservation, quick=False, room=room, user=flight_reservation.user, reserved_from=from_date, reserved_to=to_date)
+    HotelReservation.objects.create(flight_reservation=flight_reservation, quick=False, room=room, user=flight_reservation.user, reserved_from=from_date, reserved_to=to_date)
     return redirect('my_reservations')
 
 
@@ -142,10 +142,10 @@ def hotel_service_reports(request):
         'Three months ago',
         'Four months ago'
     ]
-    daysCount = [today.count(), yesterday.count(), twodaysago.count(), threedaysago.count(), fourdaysago.count(),fivedaysago.count()]
-    weeksCount = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
-    monthsCount = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
-    return JsonResponse({'daysCount': daysCount, 'days': days, 'weeks': weeks, 'weeksCount': weeksCount, 'months': months, 'monthsCount': monthsCount})
+    days_count = [today.count(), yesterday.count(), twodaysago.count(), threedaysago.count(), fourdaysago.count(),fivedaysago.count()]
+    weeks_count = [oneweekago.count(), twoweeksago.count(), threeweeksago.count(), fourweeksago.count()]
+    months_count = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
+    return JsonResponse({'daysCount': days_count, 'days': days, 'weeks': weeks, 'weeksCount': weeks_count, 'months': months, 'monthsCount': months_count})
 
 def search_rooms_after_reservation(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')

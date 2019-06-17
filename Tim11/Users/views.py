@@ -20,7 +20,6 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             user = CustomUser.objects.get(email=email)
             user.is_active = False
@@ -100,7 +99,7 @@ class FriendList(LoginRequiredMixin, View):
     def post(self, request, **kwargs):
         search = request.POST.get('search_friend')
 
-        users = CustomUser.objects.filter(Q(first_name__contains=search) | Q(last_name__contains=search)).exclude(pk=request.user.id)
+        users = CustomUser.objects.filter(Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search)).exclude(pk=request.user.id)
         users_tuple = []
         for user in users:
             user_friends = Friends.objects.get_or_create(current_user=request.user)
@@ -195,7 +194,7 @@ def cancel_reservation_room(request, reservation_id):
 
 
 def change_password_view(request, user_id):
-    user = get_object_or_404(CustomUser, pk=user_id)
+    get_object_or_404(CustomUser, pk=user_id)
     return render(request, 'Users/change_password.html', {'user_id': user_id})
 
 

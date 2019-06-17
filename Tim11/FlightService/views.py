@@ -10,10 +10,11 @@ from Tim11.settings import EMAIL_HOST_USER
 from django.db import transaction
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from Users.models import Friends
 
 def airlines(request):
-    return render(request, 'airlines_home.html')
-
+    airline = Airline.objects.order_by('-pk')[:3]
+    return render(request, 'airlines_home.html', {'airlines': airline})
 
 def search_flights(request):
     destination_from = request.GET.get('destination_from')
@@ -73,10 +74,11 @@ def search_flights(request):
     flights = paginator.get_page(page)
     return render(request, 'airlines_searched.html', {'flights': flights})
 
-
+@login_required
 def flight_detail(request, flight_id):
     flight = get_object_or_404(Flight, pk=flight_id)
-    return render(request, 'flight_id.html', {'flight':flight})
+    friends = get_object_or_404(Friends, current_user=request.user)
+    return render(request, 'flight_id.html', {'flight':flight, 'friends': friends.friend_list.all()})
 
 
 def search_airlines(request):
@@ -92,6 +94,7 @@ def airline_detail(request, airline_id):
 
 
 @login_required
+@transaction.atomic
 def reserve(request, reservation_id):
     reservation = get_object_or_404(FlightReservation, pk=reservation_id)
     reservation.user = request.user
@@ -138,6 +141,7 @@ def rate_flight(request):
 def finish_flight_reservation(request):
     seats = request.POST.getlist('seats[]')
     invited_friends = request.POST.getlist('invited_friends[]')
+
     invited_friends.insert(0, request.user.email)
     passport = request.POST.get("passport")
     if not seats or not invited_friends or len(seats) != len(invited_friends):
@@ -147,7 +151,7 @@ def finish_flight_reservation(request):
     my_reservation_id = None
     for s, i in zip(seats, invited_friends):
         if not i:
-            response = JsonResponse({'Error': 'Number of seats and passengers doesn\'t match'})
+            response = JsonResponse({'Error': 'Number of seats and passengers don\'t match'})
             response.status_code = 403
             return response
         seat = Seat.objects.get(pk=s)

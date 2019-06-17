@@ -114,19 +114,21 @@ class Seat(models.Model):
 
 @receiver(post_save, sender=Flight)
 def create_seats(sender, instance, created, **kwargs):
-    if created:
-        if instance.rows_economy > 0 and instance.cols_economy:
-            for i in range(instance.rows_economy):
-                for j in range(instance.cols_economy):
-                    Seat.objects.create(flight=instance, row=i+1, col=j+1, type="Economy")
-        if instance.rows_business > 0 and instance.cols_business:
-            for i in range(instance.rows_business):
-                for j in range(instance.cols_business):
-                    Seat.objects.create(flight=instance, row=i+1, col=j+1, type="Business")
-        if instance.rows_first > 0 and instance.cols_first:
-            for i in range(instance.rows_first):
-                for j in range(instance.cols_first):
-                    Seat.objects.create(flight=instance, row=i+1, col=j+1, type="First")
+    if not created:
+        return
+
+    if instance.rows_economy > 0 and instance.cols_economy:
+        for i in range(instance.rows_economy):
+            for j in range(instance.cols_economy):
+                Seat.objects.create(flight=instance, row=i+1, col=j+1, type="Economy")
+    if instance.rows_business > 0 and instance.cols_business:
+        for i in range(instance.rows_business):
+            for j in range(instance.cols_business):
+                Seat.objects.create(flight=instance, row=i+1, col=j+1, type="Business")
+    if instance.rows_first > 0 and instance.cols_first:
+        for i in range(instance.rows_first):
+            for j in range(instance.cols_first):
+                Seat.objects.create(flight=instance, row=i+1, col=j+1, type="First")
 
 
 class FlightReservation(models.Model):
