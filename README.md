@@ -6,7 +6,10 @@ Za pokretanje projekta je potrebno imati instaliran Python3.7 i pip
 ```
 pip install -r requirements.txt
 ```
-2. Server se pokrece pomocu komande: python manage.py runserver
+2. Server se pokrece pomocu komande: 
+```
+python manage.py runserver
+```
 3. Na konzoli ce se ispisati sledece:
     <br/>System check identified no issues (0 silenced).
     <br/>June 16, 2019 - 21:47:18
