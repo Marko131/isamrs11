@@ -2,7 +2,10 @@
 
 Za pokretanje projekta je potrebno imati instaliran Python3.7 i pip
 
-1. Potrebni paketi se instaliraju pomocu komande: pip install -r requirements.txt
+1. Potrebni paketi se instaliraju pomocu komande: 
+```
+pip install -r requirements.txt
+```
 2. Server se pokrece pomocu komande: python manage.py runserver
 3. Na konzoli ce se ispisati sledece:
     <br/>System check identified no issues (0 silenced).
