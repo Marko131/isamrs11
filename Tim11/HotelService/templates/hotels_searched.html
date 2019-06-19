@@ -116,31 +116,70 @@
                                             <input type="hidden" name="room_id" value="{{ room.pk }}">
                                             <input type="number" min="1" class="form-control search-slt" name="num_days" placeholder="Number of days">
                                             <br/>
-                                            {% if room.hotel.airport_transfer %}
-                                                <input type="checkbox" name="airport_transfer" id="airport_transfer{{ room.pk }}" value="Airport transfer" onchange="price1({{ room.hotel.airport_transfer_price }}, {{ room.pk }})">
-                                            {% endif %}
+                                        <div class="row">
+                                            <div class="col">
+
+                                                <div class="row d-flex align-items-center text-white">
+                                                {% if room.hotel.airport_transfer %}
+                                                    <input type="checkbox" name="airport_transfer" id="airport_transfer{{ room.pk }}" value="Airport transfer" onchange="price1({{ room.hotel.airport_transfer_price }}, {{ room.pk }})">
+                                                    Airport transfer
+                                                {% endif %}
+                                                </div>
+                                            <div class="row d-flex align-items-center text-white">
                                             {% if room.hotel.parking %}
                                                 <input type="checkbox" name="parking" id="parking{{ room.pk }}" value="Parking" onchange="price2({{ room.hotel.parking_price }}, {{ room.pk }})">
+                                                Parking
                                             {% endif %}
+                                            </div>
+
+                                            <div class="row d-flex align-items-center text-white">
                                             {% if room.hotel.pool %}
                                                 <input type="checkbox" name="pool" id="pool{{ room.pk }}" value="Pool" onchange="price3({{ room.hotel.pool_price }}, {{ room.pk }})">
+                                                Pool
                                             {% endif %}
+                                            </div>
+
+                                            <div class="row d-flex align-items-center text-white">
                                             {% if room.hotel.restaurant %}
                                                 <input type="checkbox" name="restaurant" id="restaurant{{ room.pk }}" value="Restaurant" onchange="price4({{ room.hotel.restaurant_price }}, {{ room.pk }})">
+                                                Restaurant
                                             {% endif %}
+                                            </div>
+
+                                            <div class="row d-flex align-items-center text-white">
                                             {% if room.hotel.gym %}
                                                 <input type="checkbox" name="gym" id="gym{{ room.pk }}" value="Gym" onchange="price5({{ room.hotel.gym_price }}, {{ room.pk }})">
+                                                Gym
                                             {% endif %}
+                                            </div>
+
+                                            <div class="row d-flex align-items-center text-white">
                                             {% if room.hotel.spa %}
                                                 <input type="checkbox" name="spa" id="spa{{ room.pk }}" value="Spa" onchange="price6({{ room.hotel.spa_price }}, {{ room.pk }})">
+                                                Spa
                                             {% endif %}
+                                            </div>
+
+                                            <div class="row d-flex align-items-center text-white">
                                             {% if room.hotel.room_service %}
                                                 <input type="checkbox" name="room_service" id="room_service{{ room.pk }}" value="Room service" onchange="price7({{ room.hotel.room_service_price }}, {{ room.pk }})">
+                                                Room service
                                             {% endif %}
+                                            </div>
+
+                                            <div class="row d-flex align-items-center text-white">
                                             {% if room.hotel.wifi %}
                                                 <input type="checkbox" name="wifi" id="wifi{{ room.pk }}" value="WiFi" onchange="price8({{ room.hotel.wifi_price }}, {{ room.pk }})">
+                                                WiFi
                                             {% endif %}
-                                            <button type="submit" class="btn btn-primary">Reserve</button>
+                                            </div>
+                                            </div>
+                                            <div class="col d-flex align-items-center text-white">
+                                                <button type="submit" class="btn btn-primary">Reserve</button>
+                                            </div>
+                                        </div>
+
+
                                         </form>
                                         </li>
                                     {% endif %}

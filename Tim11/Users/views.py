@@ -24,9 +24,9 @@ def register(request):
             user = CustomUser.objects.get(email=email)
             user.is_active = False
             user.save()
-            getUrl = request.get_host()
+            get_url = request.get_host()
             send_html_mail("Account activation",
-                           f"<a href=\"{getUrl}/activate/{user.id}\"> Click here to activate your account. </a>",
+                           f"<a href=\"http://{get_url}/activate/{user.id}\"> Click here to activate your account. </a>",
                            [user.email])
             messages.success(request, 'Activate account before logging in!')
             return redirect('login')

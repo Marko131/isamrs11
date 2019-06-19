@@ -7,6 +7,7 @@ from datetime import timedelta
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Tim11.settings')
 django.setup()
 from FlightService.models import *
+from HotelService.models import *
 from Users.models import CustomUser
 
 for i in range(10):
@@ -59,3 +60,4 @@ for i in range(50):
     d = random.randint(5, 30)
     b = random.randint(10, 30)
     f, created = Flight.objects.get_or_create(destination_from=destination_from, destination_to=destination_to, departure_time=d_time, arrival_time=a_time, flight_distance=300, price=500, airline=random.choice(airline_list), rows_economy=re, cols_economy=ce, rows_business=rb, cols_business=cb, rows_first=rf, cols_first=cf, discount=d, checked_baggage=b)
+
