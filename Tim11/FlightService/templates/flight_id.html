@@ -90,7 +90,9 @@
                 url: "/finish_flight_reservation",
                 data: {"passport": passport, "seats": selected_seats, "invited_friends": invited_friends, "csrfmiddlewaretoken": '{{ csrf_token }}'},
                 success: function(response){
-                    window.location.replace(`http://127.0.0.1:8000/my_reservations`);
+                    let getUrl = window.location;
+                    let address = getUrl.protocol + "//" + getUrl.host + "/my_reservations";
+                    window.location.replace(address);
                 }
             })
         }

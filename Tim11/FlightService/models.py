@@ -64,7 +64,7 @@ class Flight(models.Model):
     cols_business = models.PositiveIntegerField(default=0)
     rows_first = models.PositiveIntegerField(default=0)
     cols_first = models.PositiveIntegerField(default=0)
-    discount = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(99)])
+    discount = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(99)])
     checked_baggage = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)])
 
     @property

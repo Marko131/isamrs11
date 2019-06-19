@@ -10,9 +10,27 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class Hotel(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(max_length=1500)
     image = models.ImageField()
     rating = models.FloatField(default=0)
+    airport_transfer = models.BooleanField(default=False)
+    airport_transfer_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    parking = models.BooleanField(default=False)
+    parking_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    pool = models.BooleanField(default=False)
+    pool_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    restaurant = models.BooleanField(default=False)
+    restaurant_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    gym = models.BooleanField(default=False)
+    gym_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    spa = models.BooleanField(default=False)
+    spa_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    room_service = models.BooleanField(default=False)
+    room_service_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    wifi = models.BooleanField(default=False)
+    wifi_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
 
     def __str__(self):
         return self.name
@@ -25,7 +43,12 @@ class Room(models.Model):
     balcony = models.BooleanField()
     price = models.DecimalField(decimal_places=2, max_digits=10)
     hotel = models.ForeignKey(Hotel, null=False, on_delete=models.CASCADE)
+    discount = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(99)])
     image = models.ImageField(blank=True, null=True)
+
+    @property
+    def price_with_discount(self):
+        return float(self.price * (100 - self.discount)) / 100.00
 
     def __str__(self):
         return str(self.pk) + " " + self.type

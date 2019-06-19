@@ -3,6 +3,8 @@ from .models import Hotel, Room, HotelReservation, RoomRating
 from django.http import HttpResponseForbidden, JsonResponse
 from FlightService.models import FlightReservation
 from datetime import datetime, timedelta, date
+from django.db import transaction
+from django.contrib.auth.decorators import login_required
 
 
 def hotels(request):
@@ -17,20 +19,20 @@ def searched_hotels(request):
 
 def search_rooms(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')
-    print(flight_reservation_id)
     type = request.POST.get('type')
     capacity = request.POST.get('capacity')
     floor = request.POST.get('floor')
     if capacity != "":
         if floor != "":
-            rooms = Room.objects.filter(type__contains=type, capacity=capacity, floor=floor)
+            rooms = Room.objects.filter(type__contains=type, capacity__gte=capacity, floor=floor)
         else:
-            rooms = Room.objects.filter(type__contains=type, capacity=capacity)
+            rooms = Room.objects.filter(type__contains=type, capacity__gte=capacity)
     else:
         if floor != "":
             rooms = Room.objects.filter(type__contains=type, floor=floor)
         else:
             rooms = Room.objects.filter(type__contains=type)
+
     return render(request, 'hotels_searched.html', {'rooms':rooms, 'flight_reservation_id': flight_reservation_id})
 
 
@@ -43,10 +45,12 @@ def find_rooms(request, flight_reservation_id, passengers):
     flight_reservation = get_object_or_404(FlightReservation, pk=flight_reservation_id)
     if flight_reservation.user != request.user:
         return HttpResponseForbidden()
-    quick_reservations = HotelReservation.objects.filter(quick=True, user__isnull=True, room__capacity__gte=passengers, reserved_from=flight_reservation.seat.flight.arrival_time.date())
+    quick_reservations = HotelReservation.objects.filter(quick=True, user__isnull=True, room__capacity__gte=passengers, reserved_from=flight_reservation.seat.flight.arrival_time.date(), room__hotel__city=flight_reservation.seat.flight.destination_to.name, room__hotel__country=flight_reservation.seat.flight.destination_to.country)
     return render(request, 'find_rooms.html', {'flight_reservation': flight_reservation_id, 'quick_reservations': quick_reservations, 'passengers': passengers})
 
 
+@login_required
+@transaction.atomic
 def reserve_room(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')
     room_id = request.POST.get('room_id')
@@ -64,9 +68,11 @@ def reserve_room(request):
         else:
             return JsonResponse({'greska': 'postoji vec rezervacija'})
     HotelReservation.objects.create(flight_reservation=flight_reservation, quick=False, room=room, user=flight_reservation.user, reserved_from=from_date, reserved_to=to_date)
-    return redirect('http://127.0.0.1:8000/rentacar/find_vehicles/' + flight_reservation_id)
+    return redirect('find_vehicles', flight_reservation_id)
 
 
+@login_required
+@transaction.atomic
 def reserve_quick_room(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')
     room_reservation_id = request.POST.get('room_reservation_id')
@@ -147,24 +153,27 @@ def hotel_service_reports(request):
     months_count = [onemonthago.count(), twomonthsago.count(), threemonthsago.count(), fourmonthsago.count()]
     return JsonResponse({'daysCount': days_count, 'days': days, 'weeks': weeks, 'weeksCount': weeks_count, 'months': months, 'monthsCount': months_count})
 
+
 def search_rooms_after_reservation(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')
+    flight_reservation = get_object_or_404(FlightReservation, pk=flight_reservation_id)
     type = request.POST.get('type')
     capacity = request.POST.get('capacity')
     floor = request.POST.get('floor')
     if capacity != "":
         if floor != "":
-            rooms = Room.objects.filter(type__contains=type, capacity__gte=capacity, floor=floor)
+            rooms = Room.objects.filter(type__contains=type, capacity=capacity, floor=floor, hotel__city=flight_reservation.seat.flight.destination_to.name, hotel__country=flight_reservation.seat.flight.destination_to.country)
         else:
-            rooms = Room.objects.filter(type__contains=type, capacity__gte=capacity)
+            rooms = Room.objects.filter(type__contains=type, capacity=capacity, hotel__city=flight_reservation.seat.flight.destination_to.name, hotel__country=flight_reservation.seat.flight.destination_to.country)
     else:
         if floor != "":
-            rooms = Room.objects.filter(type__contains=type, floor=floor)
+            rooms = Room.objects.filter(type__contains=type, floor=floor, hotel__city=flight_reservation.seat.flight.destination_to.name, hotel__country=flight_reservation.seat.flight.destination_to.country)
         else:
-            rooms = Room.objects.filter(type__contains=type)
+            rooms = Room.objects.filter(type__contains=type, hotel__city=flight_reservation.seat.flight.destination_to.name, hotel__country=flight_reservation.seat.flight.destination_to.country)
     return render(request, 'hotels_searched.html', {'rooms': rooms, 'flight_reservation_id': flight_reservation_id})
 
 
+@login_required
 def rate_room(request):
     r = request.POST.get('rate')
     room = Room.objects.get(pk=request.POST.get('room_id'))

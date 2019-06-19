@@ -141,7 +141,7 @@ def rate_flight(request):
 def finish_flight_reservation(request):
     seats = request.POST.getlist('seats[]')
     invited_friends = request.POST.getlist('invited_friends[]')
-
+    getUrl = request.get_host()
     invited_friends.insert(0, request.user.email)
     passport = request.POST.get("passport")
     if not seats or not invited_friends or len(seats) != len(invited_friends):
@@ -164,11 +164,11 @@ def finish_flight_reservation(request):
                 flight_reservation = FlightReservation.objects.create(seat=seat, user=user, accepted=False, quick=False, creator=False)
                 if not user.is_active:
                     send_html_mail("Flight invite",
-                                   f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>",
+                                   f"<a href=\"{getUrl}/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>",
                                    [i])
         except:
             flight_reservation = FlightReservation.objects.create(seat=seat, user=None, accepted=False, creator=False, quick=False)
-            send_html_mail("Flight invite", f"<a href=\"http://127.0.0.1:8000/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>", [i])
+            send_html_mail("Flight invite", f"<a href=\"{getUrl}/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>", [i])
     if my_reservation_id is not None:
         response = JsonResponse({'passengers': len(seats), 'flight_reservation_id': my_reservation_id})
     else:
