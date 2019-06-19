@@ -72,7 +72,7 @@ class CustomUser(AbstractUser):
 
 @receiver(post_save, sender=CustomUser)
 def admin_change_password(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.is_staff:
         send_html_mail("Account activation",
                        f"<a href=\"http://127.0.0.1:8000/change_password/{instance.id}\"> Click here to activate your account. </a>",
                        [instance.email])

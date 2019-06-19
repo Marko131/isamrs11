@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import RentACar, Vehicle, VehicleReservation, VehicleRating
+from .models import RentACar, Vehicle, VehicleReservation, VehicleRating, Branch
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from django.http import JsonResponse, HttpResponseForbidden
 from FlightService.models import FlightReservation
+from django.db import transaction
 
 def rentacars(request):
     return render(request, 'rentacar_home.html')
@@ -25,6 +26,7 @@ def rentacar_detail(request, rentacar_id):
     return render(request, 'rentacar_id.html', {'rentacar': rentacar, 'reservations':quick_reservations})
 
 @login_required
+@transaction.atomic
 def quick_reserve(request, reservation_id):
     reservation = get_object_or_404(VehicleReservation, pk=reservation_id)
     reservation.user = request.user
@@ -106,6 +108,7 @@ def rentacar_service_reports(request):
          'monthsCount': months_count})
 
 
+@login_required
 def rate_vehicle(request):
     r = request.POST.get('rate')
     vehicle = Vehicle.objects.get(pk=request.POST.get('vehicle_id'))
@@ -120,10 +123,16 @@ def find_vehicles(request, flight_reservation_id):
     flight_reservation = get_object_or_404(FlightReservation, pk=flight_reservation_id)
     if flight_reservation.user != request.user:
         return HttpResponseForbidden()
-    quick_reservations = VehicleReservation.objects.filter(quick=True, user__isnull=True, reserved_from=flight_reservation.seat.flight.arrival_time.date())
+    branches = Branch.objects.filter(name=flight_reservation.seat.flight.destination_to.name, country=flight_reservation.seat.flight.destination_to.country)
+    rentacars = []
+    for branch in branches:
+        rentacars.append(branch.rentacar)
+    quick_reservations = VehicleReservation.objects.filter(quick=True, user__isnull=True, reserved_from=flight_reservation.seat.flight.arrival_time.date(), vehicle__rentacar__in=rentacars)
     return render(request, 'find_vehicles.html', {'flight_reservation': flight_reservation_id, 'quick_reservations': quick_reservations})
 
 
+@login_required
+@transaction.atomic
 def reserve_vehicle(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')
     vehicle_id = request.POST.get('vehicle_id')
@@ -146,11 +155,17 @@ def reserve_vehicle(request):
 
 def search_vehicles_after_reservation(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')
+    flight_reservation = get_object_or_404(FlightReservation, pk=flight_reservation_id)
     manufacturer = request.POST.get('manufacturer')
     model_name = request.POST.get('model_name')
     capacity = request.POST.get('capacity')
+    branches = Branch.objects.filter(name=flight_reservation.seat.flight.destination_to.name,
+                                     country=flight_reservation.seat.flight.destination_to.country)
+    rentacars = []
+    for branch in branches:
+        rentacars.append(branch.rentacar)
     if capacity != "":
-        vehicles = Vehicle.objects.filter(manufacturer__contains=manufacturer, model_name__contains=model_name, capacity__gte=capacity)
+        vehicles = Vehicle.objects.filter(manufacturer__contains=manufacturer, model_name__contains=model_name, capacity__gte=capacity, rentacar__in=rentacars)
     else:
-        vehicles = Vehicle.objects.filter(manufacturer__contains=manufacturer, model_name__contains=model_name)
+        vehicles = Vehicle.objects.filter(manufacturer__contains=manufacturer, model_name__contains=model_name, rentacar__in=rentacars)
     return render(request, 'rentacar_searched.html', {'vehicles': vehicles, 'flight_reservation_id': flight_reservation_id})

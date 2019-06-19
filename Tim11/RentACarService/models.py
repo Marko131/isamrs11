@@ -41,7 +41,12 @@ class Vehicle(models.Model):
     model_name = models.CharField(max_length=100)
     capacity = models.PositiveIntegerField(default=1)
     rentacar = models.ForeignKey(RentACar, on_delete=models.CASCADE)
+    discount = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(99)])
     image = models.ImageField(blank=True, null=True)
+
+    @property
+    def price_with_discount(self):
+        return float(self.price * (100 - self.discount)) / 100.00
 
     def __str__(self):
         return self.manufacturer + " " + self.model_name

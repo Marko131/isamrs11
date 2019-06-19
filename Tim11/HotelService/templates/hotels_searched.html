@@ -1,6 +1,83 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
+{% block scripts %}
+    <script>
+        function price1(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#airport_transfer" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+        function price2(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#parking" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+        function price3(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#pool" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+        function price4(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#restaurant" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+        function price5(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#gym" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+        function price6(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#spa" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+        function price7(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#room_service" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+        function price8(extra, id) {
+            let s = "#price" + id;
+            let s1 = "#wifi" + id;
+            if ($(s1).is(":checked")) {
+                $(s).html(parseFloat($(s).html()) + extra);
+            } else {
+                $(s).html(parseFloat($(s).html()) - extra);
+            }
+        }
+    </script>
+{% endblock %}
+
 {% block search_result %}
     {% for room in rooms %}
        <div class="row mb-3">
@@ -25,7 +102,12 @@
                             </div>
                             <div class="col-md-4 border-left card-body">
                                 <ul class="list-unstyled">
-                                    <li><h3 class="text-white">Price: {{ room.price }} EUR</h3></li>
+                                    <li>
+                                        <h3 class="text-white" style="display:inline">Price: </h3>
+                                        <h3 class="text-white" style="display:inline" id="price{{ room.pk }}">{{ room.price }}</h3>
+                                        <h3 class="text-white" style="display:inline"> EUR </h3>
+                                    </li>
+
                                     {% if flight_reservation_id %}
                                         <li>
                                         <form method="post" action="{% url 'reserve-room' %}">
@@ -34,6 +116,30 @@
                                             <input type="hidden" name="room_id" value="{{ room.pk }}">
                                             <input type="number" min="1" class="form-control search-slt" name="num_days" placeholder="Number of days">
                                             <br/>
+                                            {% if room.hotel.airport_transfer %}
+                                                <input type="checkbox" name="airport_transfer" id="airport_transfer{{ room.pk }}" value="Airport transfer" onchange="price1({{ room.hotel.airport_transfer_price }}, {{ room.pk }})">
+                                            {% endif %}
+                                            {% if room.hotel.parking %}
+                                                <input type="checkbox" name="parking" id="parking{{ room.pk }}" value="Parking" onchange="price2({{ room.hotel.parking_price }}, {{ room.pk }})">
+                                            {% endif %}
+                                            {% if room.hotel.pool %}
+                                                <input type="checkbox" name="pool" id="pool{{ room.pk }}" value="Pool" onchange="price3({{ room.hotel.pool_price }}, {{ room.pk }})">
+                                            {% endif %}
+                                            {% if room.hotel.restaurant %}
+                                                <input type="checkbox" name="restaurant" id="restaurant{{ room.pk }}" value="Restaurant" onchange="price4({{ room.hotel.restaurant_price }}, {{ room.pk }})">
+                                            {% endif %}
+                                            {% if room.hotel.gym %}
+                                                <input type="checkbox" name="gym" id="gym{{ room.pk }}" value="Gym" onchange="price5({{ room.hotel.gym_price }}, {{ room.pk }})">
+                                            {% endif %}
+                                            {% if room.hotel.spa %}
+                                                <input type="checkbox" name="spa" id="spa{{ room.pk }}" value="Spa" onchange="price6({{ room.hotel.spa_price }}, {{ room.pk }})">
+                                            {% endif %}
+                                            {% if room.hotel.room_service %}
+                                                <input type="checkbox" name="room_service" id="room_service{{ room.pk }}" value="Room service" onchange="price7({{ room.hotel.room_service_price }}, {{ room.pk }})">
+                                            {% endif %}
+                                            {% if room.hotel.wifi %}
+                                                <input type="checkbox" name="wifi" id="wifi{{ room.pk }}" value="WiFi" onchange="price8({{ room.hotel.wifi_price }}, {{ room.pk }})">
+                                            {% endif %}
                                             <button type="submit" class="btn btn-primary">Reserve</button>
                                         </form>
                                         </li>
