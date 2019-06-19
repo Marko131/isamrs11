@@ -77,6 +77,7 @@ def search_flights(request):
 @login_required
 def flight_detail(request, flight_id):
     flight = get_object_or_404(Flight, pk=flight_id)
+    friends = Friends.objects.get_or_create(current_user=request.user)
     friends = get_object_or_404(Friends, current_user=request.user)
     return render(request, 'flight_id.html', {'flight':flight, 'friends': friends.friend_list.all()})
 
