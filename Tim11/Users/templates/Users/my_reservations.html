@@ -204,6 +204,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-8 d-flex align-items-center text-white">
+                                        {{ room_reservation.room.hotel.name }}
+                                        <br/>
                                         Type: {{ room_reservation.room.type }}
                                         <br/>
                                         Capacity: {{ room_reservation.room.capacity }}
@@ -264,6 +266,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-8 d-flex align-items-center text-white">
+                                        {{ vehicle_reservation.vehicle.rentacar.name }}
+                                        <br/>
                                         {{ vehicle_reservation.vehicle.manufacturer }} {{ vehicle_reservation.vehicle.model_name }}
                                         <br/>
                                         {{ vehicle_reservation.reserved_from }} - {{ vehicle_reservation.reserved_to }}
