@@ -4,9 +4,7 @@
 {% block scripts %}
     <script>
         function skip_reservation(){
-            let tokens = window.location.href.split("/");
-            let id = tokens[tokens.length - 2];
-            window.location.replace(`http://127.0.0.1:8000/rentacar/find_vehicles/${id}`);
+            window.location.replace(`http://127.0.0.1:8000/my_reservations`);
         }
     </script>
 {% endblock %}
@@ -14,40 +12,35 @@
 {% block body %}
     <section class="search-sec">
         <div class="container">
-
-            <form action="{% url 'search_rooms_after_reservation' %}" method="post" novalidate="novalidate">
+            <form action="{% url 'search_vehicles_after_reservation' %}" method="post" novalidate="novalidate">
                 {% csrf_token %}
-                <div>
+                <div class="row">
                     <div class="col-lg-12">
                         <div class="row justify-content-center">
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
                                 <input type="hidden" name="flight_reservation_id" value="{{ flight_reservation }}">
-                                <input type="search" class="form-control search-slt" placeholder="Type" name="type">
-                            </div>
-
-                            <div style="width: 0; height: 0">
-                                <input width="0" height="0" type="hidden" name="capacity" value="{{ passengers }}">
-                            </div>
-
-                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
-                                 <input type="number" min="0" class="form-control search-slt" placeholder="Floor" name="floor">
+                                <input type="search" class="form-control search-slt" placeholder="Manufacturer" name="manufacturer">
                             </div>
 
                             <div class="col-lg-2 col-md-2 col-sm-12 p-0">
-                                <button type="submit" class="btn btn-primary wrn-btn">Search rooms</button>
+                                <input type="search" class="form-control search-slt" placeholder="Model" name="model_name">
                             </div>
 
+                            <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                                 <input type="number" min="1" class="form-control search-slt" placeholder="Capacity" name="capacity">
+                            </div>
+
+                            <div class="col-lg-2 col-md-2 col-sm-12 p-0">
+                                <button type="submit" class="btn btn-primary wrn-btn">Search vehicles</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </form>
-
             <div class="row float-right">
-                <button class="btn btn-primary wrn-btn" onclick="skip_reservation()">Skip to vehicle reservation</button>
+                <button class="btn btn-primary wrn-btn" onclick="skip_reservation()">Finish</button>
             </div>
         </div>
-
-
     </section>
 {% endblock %}
 
@@ -62,16 +55,16 @@
 
                             <div class="col-md-8  card-body">
                                 <div class="m-2 text-white h3">
-                                    {{ q_reservation.room.hotel }}
+                                    {{ q_reservation.vehicle.rentacar.name }}
                                 </div>
                                 <div class="m-2 text-white">
-                                    Type: {{ q_reservation.room.type }}
+                                    Manufacturer: {{ q_reservation.vehicle.manufacturer }}
                                 </div>
                                 <div class="m-2 text-white">
-                                    Capacity: {{ q_reservation.room.capacity }}
+                                    Model: {{ q_reservation.vehicle.model_name }}
                                 </div>
                                 <div class="m-2 text-white">
-                                    Floor: {{ q_reservation.room.floor }}
+                                    Capacity: {{ q_reservation.vehicle.capacity }}
                                 </div>
                                 <div class="m-2 text-white">
                                     From: {{ q_reservation.reserved_from }} - To: {{ q_reservation.reserved_to }}
@@ -79,12 +72,12 @@
                             </div>
                             <div class="col-md-4 border-left card-body">
                                 <ul class="list-unstyled">
-                                    <li><h3 class="text-white">Price: {{ q_reservation.room.price }} EUR</h3></li>
+                                    <li><h3 class="text-white">Price: {{ q_reservation.vehicle.price }} EUR</h3></li>
                                     <li>
                                         <form method="post" action="{% url 'reserve_quick_room' %}">
                                             {% csrf_token %}
                                             <input type="hidden" name="flight_reservation_id" value="{{ flight_reservation}}">
-                                            <input type="hidden" name="room_reservation_id" value="{{ q_reservation.id }}">
+                                            <input type="hidden" name="vehicle_reservation_id" value="{{ q_reservation.id }}">
                                             <button type="submit" class="btn btn-primary">Reserve</button>
                                         </form>
                                     </li>

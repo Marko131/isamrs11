@@ -64,7 +64,7 @@ def reserve_room(request):
         else:
             return JsonResponse({'greska': 'postoji vec rezervacija'})
     HotelReservation.objects.create(flight_reservation=flight_reservation, quick=False, room=room, user=flight_reservation.user, reserved_from=from_date, reserved_to=to_date)
-    return redirect('my_reservations')
+    return redirect('http://127.0.0.1:8000/rentacar/find_vehicles/' + flight_reservation_id)
 
 
 def reserve_quick_room(request):
@@ -149,7 +149,6 @@ def hotel_service_reports(request):
 
 def search_rooms_after_reservation(request):
     flight_reservation_id = request.POST.get('flight_reservation_id')
-    print(flight_reservation_id)
     type = request.POST.get('type')
     capacity = request.POST.get('capacity')
     floor = request.POST.get('floor')

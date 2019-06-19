@@ -4,8 +4,9 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from django.core.validators import MinValueValidator, MaxValueValidator
+from FlightService.models import FlightReservation
 
 
 class RentACar(models.Model):
@@ -33,19 +34,22 @@ class Branch(models.Model):
     class Meta:
         verbose_name_plural = 'Branches'
 
+
 class Vehicle(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
     manufacturer = models.CharField(max_length=100)
     model_name = models.CharField(max_length=100)
+    capacity = models.PositiveIntegerField(default=1)
     rentacar = models.ForeignKey(RentACar, on_delete=models.CASCADE)
     image = models.ImageField(blank=True, null=True)
 
     def __str__(self):
         return self.manufacturer + " " + self.model_name
 
+
 class RentACarAdministrator(models.Model):
     user_profile = models.OneToOneField(CustomUser, null=False, on_delete=models.CASCADE)
-    rentacarservice = models.ForeignKey(RentACar,null=False, on_delete=models.CASCADE)
+    rentacarservice = models.ForeignKey(RentACar, null=False, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user_profile.email
@@ -58,17 +62,19 @@ def assign_group(sender, instance, created, **kwargs):
 
 
 class VehicleReservation(models.Model):
+    flight_reservation = models.ForeignKey(FlightReservation, on_delete=models.CASCADE, null=True, blank=True)
+    quick = models.BooleanField(default=False)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=None, null=True, blank=True)
-    reserved_from = models.DateTimeField()
-    reserved_to = models.DateTimeField()
+    reserved_from = models.DateField()
+    reserved_to = models.DateField()
 
     def __str__(self):
         return str(self.pk) + " " + str(self.vehicle) + " " + str(self.user)
 
     @property
     def is_past(self):
-        return datetime.now(timezone.utc) > self.reserved_to
+        return date.today() > self.reserved_to
 
     def get_rate(self):
         vehicle_rate = VehicleRating.objects.get(user=self.user, vehicle=self.vehicle)
