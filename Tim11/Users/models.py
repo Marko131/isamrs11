@@ -68,7 +68,7 @@ class CustomUser(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return self.email
+        return str(self.pk) + self.email
 
 @receiver(post_save, sender=CustomUser)
 def admin_change_password(sender, instance, created, **kwargs):
