@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group
 from FlightService.models import FlightReservation
 from datetime import date, timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+from location_field.models.plain import PlainLocationField
 
 class Hotel(models.Model):
     name = models.CharField(max_length=100)
@@ -31,6 +32,7 @@ class Hotel(models.Model):
     room_service_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
     wifi = models.BooleanField(default=False)
     wifi_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    location = PlainLocationField(based_fields=['city'], zoom=7, null=True)
 
     def __str__(self):
         return self.name

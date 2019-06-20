@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime, timezone, date
 from django.core.validators import MinValueValidator, MaxValueValidator
 from FlightService.models import FlightReservation
-
+from location_field.models.plain import PlainLocationField
 
 class RentACar(models.Model):
     name = models.CharField(max_length=100)
@@ -27,6 +27,7 @@ class Branch(models.Model):
     name = models.CharField(max_length=100)
     country = models.CharField(max_length=50)
     rentacar = models.ForeignKey(RentACar, on_delete=models.CASCADE)
+    location = PlainLocationField(based_fields=['city'], zoom=7, null=True)
 
     def __str__(self):
         return self.name
