@@ -11,7 +11,11 @@
         <div class="row mt-3">
             <div class="col-3">
                 <div class="row">
-                    <img class="p-2" src="/{{ rentacar.image.url }}" alt="no-image" width="100%" height="100%">
+                    {% if rentacar.image %}
+                        <img class="p-2" src="/{{ rentacar.image.url }}" alt="no-image" width="100%" height="100%">
+                    {% else %}
+                        <img class="p-2" src="{% static 'rentacar_default.png' %}" alt="no-image" width="100%" height="100%">
+                    {% endif %}
                 </div>
 
                 <div class="row justify-content-center mt-3 text-white">
@@ -39,7 +43,11 @@
                             {% for vehicle in rentacar.vehicle_set.all %}
                                 <div class="owl-item">
                                     <div class="partner-logo d-flex align-items-center">
-                                        <img src="/{{ vehicle.image.url }}" alt="partners">
+                                        {% if vehicle.image %}
+                                            <img src="/{{ vehicle.image.url }}" alt="No image">
+                                        {% else %}
+                                            <img src="{% static 'car_default.png' %}" alt="No image">
+                                        {% endif %}
                                     </div>
                                 {{ vehicle.manufacturer }} {{ vehicle.model_name }}
                                 </div>

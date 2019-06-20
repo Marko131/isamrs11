@@ -198,7 +198,11 @@
             <div class="card h-100 w-75" style="background-color: rgba(33,37,41,.5);">
                 <div class="row">
                     <div class="col-3">
-                        <img src="/{{ hotel.image.url }}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                        {% if hotel.image %}
+                            <img src="/{{ hotel.image.url }}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                        {% else %}
+                            <img src="{% static 'hotel_default.jpg' %}" alt="No image" style='height: 100%; width: 100%; object-fit: contain'>
+                        {% endif %}
                     </div>
                     <div class="col-9">
                         <div class="mt-2 ml-3 pl-1">
