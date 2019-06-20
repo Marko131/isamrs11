@@ -165,11 +165,11 @@ def finish_flight_reservation(request):
                 flight_reservation = FlightReservation.objects.create(seat=seat, user=user, accepted=False, quick=False, creator=False)
                 if not user.is_active:
                     send_html_mail("Flight invite",
-                                   f"<a href=\"{getUrl}/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>",
+                                   f"<a href=\"http://{getUrl}/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>",
                                    [i])
         except:
             flight_reservation = FlightReservation.objects.create(seat=seat, user=None, accepted=False, creator=False, quick=False)
-            send_html_mail("Flight invite", f"<a href=\"{getUrl}/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>", [i])
+            send_html_mail("Flight invite", f"<a href=\"http://{getUrl}/invite/{flight_reservation.id}\"> Click here to accept or cancel the invite. </a>", [i])
     if my_reservation_id is not None:
         response = JsonResponse({'passengers': len(seats), 'flight_reservation_id': my_reservation_id})
     else:
